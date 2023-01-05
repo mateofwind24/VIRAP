@@ -66,6 +66,7 @@ def module4():
     ED          # cal
     ET          # cal
     Cia         # cal
+    buildingType# 1~10 number 11 is select
     '''
     column = inputdata['column']
     row = inputdata['row']
@@ -95,6 +96,7 @@ def module4():
     ncz = inputdata['ncz']
     nwcz = inputdata['nwcz']
     naircz = inputdata['naircz']
+    buildingType = inputdata['buildingType']
     # grid input start
     Cmedium_input = inputdata['Cmedium']
     WT_input = inputdata['WT']
@@ -120,20 +122,109 @@ def module4():
     ach = [[0 for j in range(row)] for i in range(column)]
     Qsoil_Qb = [[0 for j in range(row)] for i in range(column)]
     Ex = [[0 for j in range(row)] for i in range(column)]
+    if buildingType == 1:
+        Lbc = 1
+        Lfc = 0.1
+        etac = 0.001
+        Abfc = 150
+        Hbc = 1.3
+        achc = 0.45
+        Qsoil_Qbc = 0.003
+    elif buildingType == 2:
+        Lbc = 1
+        Lfc = 0
+        etac = 1
+        Abfc = 150
+        Hbc = 1.3
+        achc = 0.45
+        Qsoil_Qbc = 0.003
+    elif buildingType == 3:
+        Lbc = 2
+        Lfc = 0.1
+        etac = 0.001
+        Abfc = 150
+        Hbc = 3.66
+        achc = 0.45
+        Qsoil_Qbc = 0.003
+    elif buildingType == 4:
+        Lbc = 2
+        Lfc = 0
+        etac = 1
+        Abfc = 150
+        Hbc = 3.66
+        achc = 0.45
+        Qsoil_Qbc = 0.003
+    elif buildingType == 5:
+        Lbc = 0.1
+        Lfc = 0.1
+        etac = 0.001
+        Abfc = 150
+        Hbc = 2.44
+        achc = 0.45
+        Qsoil_Qbc = 0.003
+    elif buildingType == 6:
+        Lbc = 1
+        Lfc = 0.2
+        etac = 0.001
+        Abfc = 1500
+        Hbc = 3
+        achc = 1.5
+        Qsoil_Qbc = 0.003
+    elif buildingType == 7:
+        Lbc = 1
+        Lfc = 0
+        etac = 1
+        Abfc = 1500
+        Hbc = 3
+        achc = 1.5
+        Qsoil_Qbc = 0.003
+    elif buildingType == 8:
+        Lbc = 2
+        Lfc = 0.2
+        etac = 0.001
+        Abfc = 1500
+        Hbc = 3
+        achc = 1.5
+        Qsoil_Qbc = 0.003
+    elif buildingType == 9:
+        Lbc = 2
+        Lfc = 0
+        etac = 1
+        Abfc = 1500
+        Hbc = 3
+        achc = 1.5
+        Qsoil_Qbc = 0.003
+    elif buildingType == 10:
+        Lbc = 0.2
+        Lfc = 0.2
+        etac = 0.001
+        Abfc = 1500
+        Hbc = 3
+        achc = 1.5
+        Qsoil_Qbc =0.003 
     for i in range(column):
         for j in range(row):
             Cmedium[i][j] = float(Cmedium_input[i][j])
             LE[i][j] = float(LE_input[i][j])
             WT[i][j] = float(WT_input[i][j])
             foc[i][j] = float(foc_input[i][j])
-            Lb[i][j] = float(Lb_input[i][j])
-            Lf[i][j] = float(Lf_input[i][j])
-            eta[i][j] = float(eta_input[i][j])
-            Abf[i][j] = float(Abf_input[i][j])
-            Hb[i][j] = float(Hb_input[i][j])
-            ach[i][j] = float(ach_input[i][j])
-            Qsoil_Qb[i][j] = float(Qsoil_Qb_input[i][j])
             Ex[i][j] = int(Ex_input[i][j])
+            if buildingType == 11:
+                Lb[i][j] = float(Lb_input[i][j])
+                Lf[i][j] = float(Lf_input[i][j])
+                eta[i][j] = float(eta_input[i][j])
+                Abf[i][j] = float(Abf_input[i][j])
+                Hb[i][j] = float(Hb_input[i][j])
+                ach[i][j] = float(ach_input[i][j])
+                Qsoil_Qb[i][j] = float(Qsoil_Qb_input[i][j])
+            else:
+                Lb[i][j] = Lbc
+                Lf[i][j] = Lfc
+                eta[i][j] = etac
+                Abf[i][j] = Abfc
+                Hb[i][j] = Hbc
+                ach[i][j] = achc
+                Qsoil_Qb[i][j] = Qsoil_Qbc
     # constant, no grid param
     ATc = 70
     MMOAF = 72
