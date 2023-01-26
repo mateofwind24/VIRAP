@@ -1,5 +1,4 @@
 import math
-from tkinter import Tcl, TclError
 from flask import Flask, request, url_for, render_template, redirect, jsonify
 app = Flask(__name__)
 
@@ -7,8 +6,8 @@ app = Flask(__name__)
 def main():
     return "Hello VIRAP!"
 
-@app.route('/module4', methods=['POST'])
-def module4():
+@app.route('/singleSource', methods=['POST'])
+def singleSource():
     inputdata = request.get_json()
     '''
     row
@@ -185,8 +184,6 @@ def module4():
         B_param_6a = [[0 for j in range(row)] for i in range(column)]
         C_param_6a = [[0 for j in range(row)] for i in range(column)]
         VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
-        a = [[0 for j in range(row)] for i in range(column)]
-        b = [[0 for j in range(row)] for i in range(column)]
         DeffA_6a = Dair*(math.pow((nSA-nwSA),3.33)/math.pow(nSA,2))+(Dwater/Hs)*(math.pow(nwSA,3.33)/math.pow(nSA,2))
         DeffCZ_6a = Dair*(math.pow((ncz-nwcz),3.33)/math.pow(ncz,2))+(Dwater/Hs)*(math.pow(nwcz,3.33)/math.pow(ncz,2))
         for i in range(column):
@@ -220,7 +217,7 @@ def module4():
                 A_param_4a[i][j] = (Hs*rhoSA)/(nwSA+ks[i][j]*rhoSA+Hs*nairSA)
                 B_param_4a[i][j] = (Qsoil_Qb[i][j]*Qb[i][j]*Lf[i][j])/(DeffA_4a*eta[i][j]*(Abf[i][j]+4*Lb[i][j]*math.sqrt(Abf[i][j]))*0.36)
                 C_param_4a[i][j] = (DeffA_4a*(Abf[i][j]+4*Lb[i][j]*math.sqrt(Abf[i][j]))*0.36)/(Qb[i][j]*Ls[i][j])
-                if Qsoil[i][j] == 0:
+                if Qsoil[i][j] == 0:                                                                                    #check
                     VFsesp_4a[i][j] = (A_param_4a[i][j]*C_param_4a[i][j])/(1+A_param_4a[i][j]+((DeffT_4a[i][j]*Lf[i][j])/Ls[i][j]*DeffA_4a[i][j]*eta[i][j]))
                 elif Qsoil[i][j] > 0:
                     VFsesp_4a[i][j] = (A_param_4a[i][j]*C_param_4a[i][j]*math.exp(B_param_4a[i][j]))/(math.exp(B_param_4a[i][j])+C_param_4a[i][j]+(A_param_4a[i][j]/C_param_4a[i][j])*(math.exp(B_param_4a[i][j])-1))
@@ -309,6 +306,153 @@ def module4():
         "Cnca": Cnca
         }
     return jsonify(data)
+
+@app.route('/multipleSource', methods=['POST'])
+def multipleSource():
+    inputdata = request.get_json()
+    chemNum = int(inputdata['chemNum'])
+    chem_input = inputdata['chem']
+    S_input = inputdata['S']
+    Hc_input = inputdata['Hc']
+    Dair_input = inputdata['Dair']
+    Dwater_input = inputdata['Dwater']
+    DHvb_input = inputdata['DHvb']
+    Tc_input = inputdata['Tc']
+    Tb_input = inputdata['Tb']
+    MW_input = inputdata['MW']
+    IUR_input = inputdata['IUR']
+    Rfc_input = inputdata['Rfc']
+    Mut_input = inputdata['Mut']
+    Source = int(inputdata['Source'])
+    Ts = float(inputdata['Ts'])
+    Organic_input = inputdata['Organic']
+    Koc_input = inputdata['Koc']
+    kd = float(inputdata['kd'])
+    pH = float(inputdata['pH'])
+    nSA = float(inputdata['nSA'])
+    nwSA = float(inputdata['nwSA'])
+    nairSA = float(inputdata['nairSA'])
+    rhoSA = float(inputdata['rhoSA'])
+    hcz = float(inputdata['hcz'])
+    ncz = float(inputdata['ncz'])
+    nwcz = float(inputdata['nwcz'])
+    naircz = float(inputdata['naircz'])
+    buildingType = int(inputdata['buildingType'])
+    Cmedium_input = inputdata['Cmedium']
+    WT = float(inputdata['WT'])
+    LE = float(inputdata['LE'])
+    foc_input = inputdata['foc']
+    Lb = float(inputdata['Lb'])
+    Lf = float(inputdata['Lf'])
+    eta = float(inputdata['eta'])
+    Abf = float(inputdata['Abf'])
+    Hb = float(inputdata['Hb'])
+    ach = float(inputdata['ach'])
+    Qsoil_Qb = float(inputdata['Qsoil_Qb'])
+    Ex = int(inputdata['Ex'])
+    S = [0 for i in range(chemNum)]
+    Hc = [0 for i in range(chemNum)]
+    Dair = [0 for i in range(chemNum)]
+    Dwater = [0 for i in range(chemNum)]
+    DHvb = [0 for i in range(chemNum)]
+    Tc = [0 for i in range(chemNum)]
+    Tb = [0 for i in range(chemNum)]
+    MW = [0 for i in range(chemNum)]
+    IUR = [0 for i in range(chemNum)]
+    Rfc = [0 for i in range(chemNum)]
+    Mut = [0 for i in range(chemNum)]
+    Organic = [0 for i in range(chemNum)]
+    Koc = [0 for i in range(chemNum)]
+    Cmedium = [0 for i in range(chemNum)]
+    foc = [0 for i in range(chemNum)]
+    for i in range(chemNum):
+        S[i] = float(S_input[i])
+        Hc[i] = float(Hc_input[i])
+        Dair[i] = float(Dair_input[i])
+        Dwater[i] = float(Dwater_input[i])
+        DHvb[i] = float(DHvb_input[i])
+        Tc[i] = float(Tc_input[i])
+        Tb[i] = float(Tb_input[i])
+        MW[i] = float(MW_input[i])
+        IUR[i] = float(IUR_input[i])
+        Rfc[i] = float(Rfc_input[i])
+        Mut[i] = float(Mut_input[i])
+        Organic[i] = float(Organic_input[i])
+        Koc[i] = float(Koc_input[i])
+        Cmedium[i] = float(Cmedium_input[i])
+        foc[i] = float(foc_input[i])
+    ATc = 70
+    MMOAF = 72
+    Rc = 1.987
+    Tr = 298.1
+    R = 0.00008205
+    Tb_Tc = Tb/Tc
+    if Tb_Tc<=0.57:
+        n = 0.3
+    elif Tb_Tc>0.57 and Tb_Tc<=0.71:
+        n = 0.74*Tb_Tc-0.116
+    else:
+        n = 0.41
+    Hr = Hc/(0.000082057*298)
+    DHvs = DHvb*(math.pow((1-Ts/Tc)/(1-Tb/Tc),n))
+    Hs = (math.exp(-(DHvs/Rc)*(1/Ts-1/Tr))*Hc)/(R*Ts)
+    Qb = Abf*Hb*ach
+    Qsoil = Qsoil_Qb*Qb
+    Ls = LE-WT
+    hSA = Ls
+    Cs = [0 for i in range(chemNum)]
+    for i in range(chemNum):
+        Cs[i] = Hs*Cmedium[i]*1000
+    # VFwesp calculate CM6a
+    if Source == 0:
+        DeffA_6a = [0 for i in range(chemNum)]
+        DeffCZ_6a = [0 for i in range(chemNum)]
+        DeffT_6a = [0 for i in range(chemNum)]
+        A_param_6a = [0 for i in range(chemNum)]
+        B_param_6a = [0 for i in range(chemNum)]
+        C_param_6a = [0 for i in range(chemNum)]
+        VFwesp_6a = [0 for i in range(chemNum)]
+        for i in range(chemNum):
+            DeffA_6a[i] = Dair[i]*(math.pow((nSA-nwSA),3.33)/math.pow(nSA,2))+(Dwater[i]/Hs)*(math.pow(nwSA,3.33)/math.pow(nSA,2))
+            DeffCZ_6a[i] = Dair[i]*(math.pow((ncz-nwcz),3.33)/math.pow(ncz,2))+(Dwater[i]/Hs)*(math.pow(nwcz,3.33)/math.pow(ncz,2))
+            DeffT_6a[i] = (hSA-Lb)/((hSA-Lb-hcz)/DeffA_6a[i]+hcz/DeffCZ_6a[i])
+            if Qsoil == 0:
+                A_param_6a[i] = (DeffT_6a[i]*(Abf+4*Lb*math.sqrt(Abf)*0.36))/(Qb*(Ls-Lb))
+                VFwesp_6a[i] = A_param_6a[i]/(1+A_param_6a[i]+((DeffT_6a[i]*Lf/((Ls-Lb)*DeffA_6a[i]*eta))))
+            elif Qsoil > 0:
+                A_param_6a[i] = (DeffT_6a[i]*(Abf+4*Lb*math.sqrt(Abf)*0.36))/(Qb*(Ls-Lb))
+                B_param_6a[i] = (Qsoil_Qb*Qb*Lf)/(DeffA_6a[i]*eta*(Abf+4*Lb*math.sqrt(Abf))*0.36)
+                C_param_6a[i] = Qsoil_Qb[i][j]
+                VFwesp_6a[i] = (A_param_6a[i]*math.exp(B_param_6a[i]))/(math.exp(B_param_6a[i])+A_param_6a[i]+(A_param_6a[i]/C_param_6a[i])*(math.exp(B_param_6a[i])-1))
+    # VFsesp calculate CM4
+    if Source == 1:
+        ks = [0 for i in range(chemNum)]
+        DeffA_4a = [0 for i in range(chemNum)]
+        DeffCZ_4a = [0 for i in range(chemNum)]
+        DeffT_4a = [0 for i in range(chemNum)]
+        A_param_4a = [0 for i in range(chemNum)]
+        B_param_4a = [0 for i in range(chemNum)]
+        C_param_4a = [0 for i in range(chemNum)]
+        VFsesp_4a = [0 for i in range(chemNum)]
+        DeffA_4a[i] = Dair[i]*(math.pow((nSA-nwSA),3.33)/math.pow(nSA,2))+(Dwater[i]/Hs)*(math.pow(nwSA,3.33)/math.pow(nSA,2))
+        DeffCZ_4a[i] = Dair[i]*(math.pow((ncz-nwcz),3.33)/math.pow(ncz,2))+(Dwater[i]/Hs)*(math.pow(nwcz,3.33)/math.pow(ncz,2))
+        for i in range(chemNum):
+            if Organic == 0:
+                ks[i] = kd
+            else:
+                ks[i] = Koc[i]*foc[i]
+                DeffA_4a[i] = Dair[i]*(math.pow((nSA-nwSA),3.33)/math.pow(nSA,2))+(Dwater[i]/Hs)*(math.pow(nwSA,3.33)/math.pow(nSA,2))
+                DeffCZ_4a[i] = Dair[i]*(math.pow((ncz-nwcz),3.33)/math.pow(ncz,2))+(Dwater[i]/Hs)*(math.pow(nwcz,3.33)/math.pow(ncz,2))
+                DeffT_4a[i] = (hSA-Lb)/((hSA-Lb-hcz)/DeffA_4a[i]+hcz/DeffCZ_4a[i])
+                A_param_4a[i] = (Hs*rhoSA)/(nwSA+ks[i]*rhoSA+Hs*nairSA)
+                B_param_4a[i] = (Qsoil_Qb*Qb*Lf)/(DeffA_4a[i]*eta*(Abf+4*Lb*math.sqrt(Abf))*0.36)
+                C_param_4a[i] = (DeffA_4a[i]*(Abf+4*Lb*math.sqrt(Abf))*0.36)/(Qb*Ls)
+                if Qsoil == 0:
+                    VFsesp_4a[i] = (A_param_4a[i]*C_param_4a[i])/(1+A_param_4a[i]+((DeffT_4a[i]*Lf)/Ls*DeffA_4a[i]*eta))
+                elif Qsoil > 0:
+                    VFsesp_4a[i] = (A_param_4a[i]*C_param_4a[i]*math.exp(B_param_4a[i]))/(math.exp(B_param_4a[i])+C_param_4a[i]+(A_param_4a[i]/C_param_4a[i])*(math.exp(B_param_4a[i])-1))
+ 
+    return 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
