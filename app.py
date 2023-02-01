@@ -29,7 +29,7 @@ def singleSource():
     Mut         # No=0, Yes=1, VC=2
     n           # cal
     Ls
-    type        # GW=0, Soil=1
+    type        # Groundwater, Soil, Groundwater&soil
     Ts
     Cs          # grid cal
     Cmedium     # gridinput
@@ -185,7 +185,7 @@ def singleSource():
             if Qsoil[i][j] < 0:
                 return "Error: Qsoil < 0"
             Cs[i][j] = Hs*Cmedium[i][j]*1000
-            Ls[i][j] = LE[i][j]-WT[i][j]
+            Ls[i][j] = WT[i][j]-LE[i][j]
             hSA[i][j] = Ls[i][j]
     # VFwesp calculate CM6a
     if Type == "Groundwater":
@@ -230,6 +230,36 @@ def singleSource():
                     VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
                 elif Qsoil[i][j] > 0:
                     VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
+    if Type == "Groundwater&Soil":
+        ks = [[0 for j in range(row)] for i in range(column)]
+        DeffT = [[0 for j in range(row)] for i in range(column)]
+        A_param_6a = [[0 for j in range(row)] for i in range(column)]
+        A_param_4a = [[0 for j in range(row)] for i in range(column)]
+        B_param = [[0 for j in range(row)] for i in range(column)]
+        C_param_6a = [[0 for j in range(row)] for i in range(column)]
+        C_param_4a = [[0 for j in range(row)] for i in range(column)]
+        VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
+        VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
+        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
+        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
+        for i in range(column):
+            for j in range(row):
+                if Organic == 0:
+                    ks[i][j] = kd
+                else:
+                    ks[i][j] = Koc*foc[i][j]
+                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
+                A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA,nwSA,ks[i][j],nairSA)
+                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
+                C_param_4a[i][j] = C_param_4a_cal(DeffA,Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                if Qsoil[i][j] == 0:
+                    VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA,eta[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
+                elif Qsoil[i][j] > 0:
+                    C_param_6a[i][j] = C_param_6a_cal(Qsoil_Qb[i][j])
+                    VFwesp_6a[i][j] = VFwesp_6a_Qsnozero_cal(A_param_6a[i][j],B_param[i][j],C_param_6a[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
     # Risk calculate loop
     mIURTCE_R_GW = 1.0e-6;
     IURTCE_R_GW = 3.1e-6;
@@ -253,28 +283,51 @@ def singleSource():
                 EF[i][j] = 250
                 ED[i][j] = 25
                 ET[i][j] = 8
-            if Type == "Groundwater":
-                Cia[i][j] = VFwesp_6a[i][j]*Cs[i][j]
-            elif Type == "Soil":
-                Cia[i][j] = VFsesp_4a[i][j]*Cs[i][j]
-            if chem == "Trichloroethylene":
-                Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j])
-            elif Mut == "No":          # check no Ex
-                Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc)
-            elif Mut == "Yes":          # check no Ex
-                Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc)
-            elif Mut == "VC" and Ex[i][j] == 0:
-                Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24))
-            elif Mut == "VC" and Ex[i][j] == 1:
-                Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)
+            if Type!="Groundwater&Soil":
+                if Type == "Groundwater":
+                    Cia[i][j] = VFwesp_6a[i][j]*Cs[i][j]
+                elif Type == "Soil":
+                    Cia[i][j] = VFsesp_4a[i][j]*Cs[i][j]
+                if chem == "Trichloroethylene":
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j])
+                elif Mut == "No":          # check no Ex
+                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc)
+                elif Mut == "Yes":          # check no Ex
+                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc)
+                elif Mut == "VC" and Ex[i][j] == 0:
+                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24))
+                elif Mut == "VC" and Ex[i][j] == 1:
+                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)
+            else:
+                Cia2 = [[0 for j in range(row)] for i in range(column)]
+                if Type == "Groundwater":
+                    Cia[i][j] = VFwesp_6a[i][j]*Cs[i][j]
+                elif Type == "Soil":
+                    Cia2[i][j] = VFsesp_4a[i][j]*Cs[i][j]
+                if chem == "Trichloroethylene":
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j]) + Risk_TCE_cal(Cia2[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j])
+                elif Mut == "No":          # check no Ex
+                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc) + Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],ATc)
+                elif Mut == "Yes":          # check no Ex
+                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc) + Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia2[i][j],ATc)
+                elif Mut == "VC" and Ex[i][j] == 0:
+                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)) + Cia2[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24))
+                elif Mut == "VC" and Ex[i][j] == 1:
+                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24) + Cia2[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)
     # HQ calculate
     HQ = [[0 for j in range(row)] for i in range(column)]
     for i in range(column):
         for j in range(row):
-            if Rfc != 0:
-                HQ[i][j] = HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia[i][j],Rfc,ATnc[i][j])
+            if Type!="Groundwater&Soil":
+                if Rfc != 0:
+                    HQ[i][j] = HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia[i][j],Rfc,ATnc[i][j])
+                else:
+                    HQ[i][j] = "NULL"
             else:
-                HQ[i][j] = "NULL"
+                if Rfc != 0:
+                    HQ[i][j] = HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia[i][j],Rfc,ATnc[i][j]) + HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],Rfc,ATnc[i][j])
+                else:
+                    HQ[i][j] = "NULL"
     # Cca, Cnca calculate
     mIURTCE_R = 1
     IURTCE_R = 1
@@ -296,17 +349,27 @@ def singleSource():
                     Cnca[i][j] = "NULL"
     if Type == "Groundwater":
         data = {
-        "VFwesp": VFwesp_6a,
-        "Qsoil": Qsoil,
+        "Risk": Risk,
+        "HQ": HQ,
+        "Cca": Cca,
+        "Cnca": Cnca,
+        "DeffA": DeffA,
+        "DeffCZ":DeffCZ,
+        "DeffT":DeffT,
+        "Aparam":A_param_6a,
+        "Bparam":B_param,
+        "VFwesp":VFwesp_6a,
+        "Cia":Cia
+        }
+    elif Type == "Soil":
+        data = {
         "Risk": Risk,
         "HQ": HQ,
         "Cca": Cca,
         "Cnca": Cnca
         }
-    elif Type == "Soil":
+    elif Type == "Grounwater&Soil":
         data = {
-        "VFsesp": VFsesp_4a,
-        "Qsoil": Qsoil,
         "Risk": Risk,
         "HQ": HQ,
         "Cca": Cca,
@@ -738,7 +801,7 @@ def DeffT_cal(hSA,Lb,hcz,DeffA,DeffCZ):
     return DeffT
 
 def A_param_6a_cal(DeffT,Abf,Lb,Qb,Ls):
-    A_param_6a = (DeffT*(Abf+4*Lb*math.sqrt(Abf)*0.36))/(Qb*(Ls-Lb))
+    A_param_6a = (DeffT*((Abf+4*Lb*math.sqrt(Abf))*0.36))/(Qb*(Ls-Lb))
     return A_param_6a
 
 def B_param_cal(Qsoil_Qb,Qb,Lf,DeffA,eta,Abf,Lb):
