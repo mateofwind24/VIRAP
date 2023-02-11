@@ -681,49 +681,56 @@ def singleSource():
             hSA[i][j] = Ls[i][j]
     # VFwesp calculate CM6a
     if Type == "sat":
+        DeffA = [[0 for j in range(row)] for i in range(column)]
+        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
         A_param_6a = [[0 for j in range(row)] for i in range(column)]
         B_param = [[0 for j in range(row)] for i in range(column)]
         C_param_6a = [[0 for j in range(row)] for i in range(column)]
         VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
-        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
-        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
         for i in range(column):
             for j in range(row):
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
+                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
+                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
+                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
-                    VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA,eta[i][j])
+                    VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA[i][j],eta[i][j])
                 elif Qsoil[i][j] > 0:
-                    B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
+                    B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
                     C_param_6a[i][j] = C_param_6a_cal(Qsoil_Qb[i][j])
                     VFwesp_6a[i][j] = VFwesp_6a_Qsnozero_cal(A_param_6a[i][j],B_param[i][j],C_param_6a[i][j])
     # VFsesp calculate CM4
     if Type == "unsat":
         ks = [[0 for j in range(row)] for i in range(column)]
+        DeffA = [[0 for j in range(row)] for i in range(column)]
+        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
         A_param_4a = [[0 for j in range(row)] for i in range(column)]
         B_param = [[0 for j in range(row)] for i in range(column)]
         C_param_4a = [[0 for j in range(row)] for i in range(column)]
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
-        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
-        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
         for i in range(column):
             for j in range(row):
                 if Organic == 0:
                     ks[i][j] = kd
                 else:
                     ks[i][j] = Koc*foc[i][j]
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
-                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA,nwSA,ks[i][j],nairSA)
-                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
-                C_param_4a[i][j] = C_param_4a_cal(DeffA,Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
+                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
+                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
+                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA[i][j],nwSA[i][j],ks[i][j],nairSA[i][j])
+                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
+                C_param_4a[i][j] = C_param_4a_cal(DeffA[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:                                                                                    #check
                     VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
                 elif Qsoil[i][j] > 0:
                     VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
+    # CM4 and CM6 both
     if Type == "both":
         ks = [[0 for j in range(row)] for i in range(column)]
+        DeffA = [[0 for j in range(row)] for i in range(column)]
+        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
         A_param_6a = [[0 for j in range(row)] for i in range(column)]
         A_param_4a = [[0 for j in range(row)] for i in range(column)]
@@ -732,19 +739,19 @@ def singleSource():
         C_param_4a = [[0 for j in range(row)] for i in range(column)]
         VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
-        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
-        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
         for i in range(column):
             for j in range(row):
                 if Organic == 0:
                     ks[i][j] = kd
                 else:
                     ks[i][j] = Koc*foc[i][j]
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
+                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
+                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
+                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
-                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA,nwSA,ks[i][j],nairSA)
-                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
-                C_param_4a[i][j] = C_param_4a_cal(DeffA,Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA[i][j],nwSA[i][j],ks[i][j],nairSA[i][j])
+                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
+                C_param_4a[i][j] = C_param_4a_cal(DeffA[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
                     VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA,eta[i][j])
                     VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
@@ -898,6 +905,7 @@ def multipleSource():
     Koc = [0 for i in range(5)]
     Koct = [0 for i in range(5)]
     Cmedium = [0 for i in range(5)]
+    Cmedium2 = [0 for i in range(5)]
     foc = [0 for i in range(5)]
     Ts = [0 for i in range(5)]
     Type = [0 for i in range(5)]
@@ -1086,14 +1094,6 @@ def multipleSource():
     except:
         pass
     try:
-        Cmedium[0] = float(inputdata['soilconc_1'])
-        Cmedium[1] = float(inputdata['soilconc_2'])
-        Cmedium[2] = float(inputdata['soilconc_3'])
-        Cmedium[3] = float(inputdata['soilconc_4'])
-        Cmedium[4] = float(inputdata['soilconc_5'])
-    except:
-        pass
-    try:
         foc[0] = float(inputdata['value_foc_1'])
         foc[1] = float(inputdata['value_foc_2'])
         foc[2] = float(inputdata['value_foc_3'])
@@ -1110,11 +1110,49 @@ def multipleSource():
     except:
         pass
     try:
-        Type[0] = float(inputdata['type_1'])
-        Type[1] = float(inputdata['type_2'])
-        Type[2] = float(inputdata['type_3'])
-        Type[3] = float(inputdata['type_4'])
-        Type[4] = float(inputdata['type_5'])
+        Type[0] = inputdata['type_1']
+        Type[1] = inputdata['type_2']
+        Type[2] = inputdata['type_3']
+        Type[3] = inputdata['type_4']
+        Type[4] = inputdata['type_5']
+    except:
+        pass
+    try:
+        if Type[0] == "sat":
+            Cmedium[0] = float(inputdata['sat_soilconc_1'])
+        elif Type[0] == "unsat":
+            Cmedium[0] = float(inputdata['unsat_soilconc_1'])
+        else:
+            Cmedium[0] = float(inputdata['sat_soilconc_1'])
+            Cmedium2[0] = float(inputdata['unsat_soilconc_1'])
+        if Type[1] == "sat":
+            Cmedium[1] = float(inputdata['sat_soilconc_2'])
+        elif Type[1] == "unsat":
+            Cmedium[1] = float(inputdata['unsat_soilconc_2'])
+        else:
+            Cmedium[1] = float(inputdata['sat_soilconc_2'])
+            Cmedium2[1] = float(inputdata['unsat_soilconc_2'])
+        if Type[2] == "sat":
+            Cmedium[2] = float(inputdata['sat_soilconc_3'])
+        elif Type[2] == "unsat":
+            Cmedium[2] = float(inputdata['unsat_soilconc_3'])
+        else:
+            Cmedium[2] = float(inputdata['sat_soilconc_3'])
+            Cmedium2[2] = float(inputdata['unsat_soilconc_3'])
+        if Type[3] == "sat":
+            Cmedium[3] = float(inputdata['sat_soilconc_4'])
+        elif Type[3] == "unsat":
+            Cmedium[3] = float(inputdata['unsat_soilconc_4'])
+        else:
+            Cmedium[3] = float(inputdata['sat_soilconc_4'])
+            Cmedium2[3] = float(inputdata['unsat_soilconc_4'])
+        if Type[4] == "sat":
+            Cmedium[4] = float(inputdata['sat_soilconc_5'])
+        elif Type[4] == "unsat":
+            Cmedium[4] = float(inputdata['unsat_soilconc_5'])
+        else:
+            Cmedium[4] = float(inputdata['sat_soilconc_5'])
+            Cmedium2[4] = float(inputdata['unsat_soilconc_5'])
     except:
         pass
     try:
@@ -1148,7 +1186,10 @@ def multipleSource():
     Hb = float(inputdata['Hb'])
     ach = float(inputdata['ach'])
     Qsoil_Qb = float(inputdata['Qsoil_Qb'])
-    Ex = int(inputdata['Ex'])
+    Ex = int(inputdata['expType'])
+    EF = int(inputdata['EF'])
+    ED = int(inputdata['ED'])
+    ET = int(inputdata['ET'])
     ATc = 70
     MMOAF = 72
     Rc = 1.987
@@ -1164,6 +1205,7 @@ def multipleSource():
     Ls = [0 for i in range(5)]
     hSA = [0 for i in range(5)]
     Cs = [0 for i in range(chemNum)]
+    Cs2 = [0 for i in range(chemNum)]
     for i in range(chemNum):
         Tb_Tc[i] = Tb[i]/Tc[i]
         if Tb_Tc[i]<=0.57:
@@ -1177,7 +1219,11 @@ def multipleSource():
         Hs[i] = (math.exp(-(DHvs[i]/Rc)*(1/Ts[i]-1/Tr))*Hc[i])/(R*Ts[i])
         Ls[i] = LE[i]-WT[i]
         hSA[i] = Ls[i]
-        Cs[i] = Hs[i]*Cmedium[i]*1000
+        if Type != "both":
+            Cs[i] = Hs[i]*Cmedium[i]*1000
+        else:
+            Cs[i] = Hs[i]*Cmedium[i]*1000
+            Cs2[i] = Hs[i]*Cmedium2[i]*1000
     # VFwesp calculate CM6a
     DeffA = [0 for i in range(chemNum)]
     DeffCZ = [0 for i in range(chemNum)]
@@ -1191,7 +1237,8 @@ def multipleSource():
     C_param_4a = [0 for i in range(chemNum)]
     VFsesp_4a = [0 for i in range(chemNum)]
     for i in range(chemNum):
-        if Type[i] == "Groundwater":
+        # VFwesp calculate CM6
+        if Type[i] == "sat":
             DeffA[i] = DeffA_cal(Dair[i],nSA,nwSA,Dwater[i],Hs[i])
             DeffCZ[i] = DeffCZ_cal(Dair[i],ncz,nwcz,Dwater[i],Hs[i])
             DeffT[i] = DeffT_cal(hSA[i],Lb,hcz,DeffA[i],DeffCZ[i])
@@ -1200,10 +1247,10 @@ def multipleSource():
                 VFwesp_6a[i] = VFwesp_6a_Qszero_cal(A_param_6a[i],DeffT[i],Lf,Ls,Lb,DeffA[i],eta)
             elif Qsoil > 0:
                 B_param[i] = B_param_cal(Qsoil_Qb,Qb,Lf,DeffA[i],eta,Abf,Lb)
-                C_param_6a[i] = C_param_6a_cal(Qsoil_Qb[i])
+                C_param_6a[i] = C_param_6a_cal(Qsoil_Qb)
                 VFwesp_6a[i] = VFwesp_6a_Qsnozero_cal(A_param_6a[i],B_param[i],C_param_6a[i])
-    # VFsesp calculate CM4
-        if Type[i] == "Soil":
+        # VFsesp calculate CM4
+        elif Type[i] == "unsat":
             if Organic == 0:
                 ks[i] = kd
             else:
@@ -1218,47 +1265,84 @@ def multipleSource():
                 VFsesp_4a[i] = VFsesp_4a_Qszero_cal(A_param_4a[i],C_param_4a[i],DeffT[i],Lf,Ls[i],DeffA[i],eta)
             elif Qsoil > 0:
                 VFsesp_4a[i] = VFsesp_4a_Qsnozero_cal(A_param_4a[i],C_param_4a[i],B_param[i])
+        # both
+        else:
+            if Organic == 0:
+                ks[i] = kd
+            else:
+                ks[i] = Koc[i]*foc[i]
+            DeffA[i] = DeffA_cal(Dair[i],nSA,nwSA,Dwater[i],Hs[i])
+            DeffCZ[i] = DeffCZ_cal(Dair[i],ncz,nwcz,Dwater[i],Hs[i])
+            DeffT[i] = DeffT_cal(hSA[i],Lb,hcz,DeffA[i],DeffCZ[i])
+            A_param_6a[i] = A_param_6a_cal(DeffT[i],Abf,Lb,Qb,Ls[i])
+            B_param[i] = B_param_cal(Qsoil_Qb,Qb,Lf,DeffA[i],eta,Abf,Lb)
+            C_param_4a[i] = C_param_4a_cal(DeffA[i],Abf,Lb,Qb,Ls[i])
+            if Qsoil == 0:
+                VFwesp_6a[i] = VFwesp_6a_Qszero_cal(A_param_6a[i],DeffT[i],Lf,Ls,Lb,DeffA[i],eta)
+                VFsesp_4a[i] = VFsesp_4a_Qszero_cal(A_param_4a[i],C_param_4a[i],DeffT[i],Lf,Ls[i],DeffA[i],eta)
+            elif Qsoil > 0:
+                C_param_6a[i] = C_param_6a_cal(Qsoil_Qb)
+                VFwesp_6a[i] = VFwesp_6a_Qsnozero_cal(A_param_6a[i],B_param[i],C_param_6a[i])
+                VFsesp_4a[i] = VFsesp_4a_Qsnozero_cal(A_param_4a[i],C_param_4a[i],B_param[i])
     # Risk calculate loop
     mIURTCE_R_GW = 1.0e-6;
     IURTCE_R_GW = 3.1e-6;
     mIURTCE_C_GW = 4.1e-6;
     IURTCE_C_GW = 4.1e-6;
     Cia = [0 for i in range(chemNum)]
+    Cia2 = [0 for i in range(chemNum)]
     Risk = [0 for i in range(chemNum)]
     for i in range(chemNum):
-        if Ex == 0:
+        if Ex == 1:
             ATnc = 26
-            EF = 350
-            ED = 26
-            ET = 24
         else:
             ATnc = 25
-            EF = 250
-            ED = 25
-            ET = 8
-        if Type == "Groundwater":
+        if Type == "sat":
             Cia[i] = VFwesp_6a[i]*Cs[i]
-        elif Type == "Soil":
+        elif Type == "unsat":
             Cia[i] = VFsesp_4a[i]*Cs[i]
-        if chem[i] == "Trichloroethylene" and Ex[i] == 0:
-            Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
-        elif chem[i] == "Trichloroethylene" and Ex[i] == 1:
-            Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
-        elif Mut[i] == "No":
-            Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc)
-        elif Mut[i] == "Yes":
-            Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc)
-        elif Mut[i] == "VC" and Ex == 0:
-            Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
-        elif Mut[i] == "VC" and Ex == 1:
-            Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
+        else:
+            Cia[i] = VFwesp_6a[i]*Cs[i]
+            Cia2[i] = VFsesp_4a[i]*Cs2[i]
+        if Type != "both":
+            if chem[i] == "Trichloroethylene" and Ex[i] == 1:
+                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
+            elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
+                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
+            elif Mut[i] == "No":
+                Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc)
+            elif Mut[i] == "Yes":
+                Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc)
+            elif Mut[i] == "VC" and Ex == 1:
+                Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
+            elif Mut[i] == "VC" and Ex == 2:
+                Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
+        else:
+            if chem[i] == "Trichloroethylene" and Ex[i] == 1:
+                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED) + Risk_TCE_cal(Cia2[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
+            elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
+                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED) + Risk_TCE_cal(Cia2[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
+            elif Mut[i] == "No":
+                Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc) + Risk_noMut_cal(IUR[i],EF,ED,ET,Cia2[i],ATc)
+            elif Mut[i] == "Yes":
+                Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc) + Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia2[i],ATc)
+            elif Mut[i] == "VC" and Ex == 1:
+                Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24)) + Cia2[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
+            elif Mut[i] == "VC" and Ex == 2:
+                Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24) + Cia2[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
     # HQ calculate
     HQ = [0 for i in range(chemNum)]
     for i in range(chemNum):
-        if Rfc[i] != 0:
-            HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc)
+        if Type != "both":
+            if Rfc[i] != 0:
+                HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc)
+            else:
+                HQ[i] = "NULL"
         else:
-            HQ[i] = "NULL"
+            if Rfc[i] != 0:
+                HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc) + HQ_cal(EF,ED,ET,Cia2[i],Rfc[i],ATnc)
+            else:
+                HQ[i] = "NULL"
     # Cca, Cnca calculate
     mIURTCE_R = 1
     IURTCE_R = 1
