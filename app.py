@@ -2,13 +2,11 @@ import math
 from flask import Flask, request, url_for, render_template, redirect, jsonify
 app = Flask(__name__)
 
-@app.route('/')
-def main():
-    return "Hello VIRAP!"
-
 @app.route('/singleSource', methods=['POST'])
 def singleSource():
     inputdata = request.get_json()
+    column = int(Column_cal(inputdata['waterlevel']))
+    row = int(Row_cal(inputdata['waterlevel'], column))
     chem = inputdata['chem']
     S = float(inputdata['value_S'])
     Hc = float(inputdata['value_Hc'])
@@ -17,7 +15,6 @@ def singleSource():
     DHvb = float(inputdata['value_DHvb'])
     Tc = float(inputdata['value_Tc'])
     Tb = float(inputdata['value_Tb'])
-    MW = float(inputdata['value_MW'])
     IUR_input = inputdata['value_IUR']
     if IUR_input=="NULL":
         IUR = 0
@@ -27,29 +24,29 @@ def singleSource():
     if Rfc_input=="NULL":
         Rfc = 0
     else:
-        Rfc = Rfc_input
+        Rfc = float(Rfc_input)
     Mut = inputdata['value_Mut']
     Type = inputdata['conc_type']
     Ts = float(inputdata['Ts']) + 273.15
-    Organic = int(inputdata['value_Organic'])
+    Organic = 0#int(inputdata['value_Organic'])
     Koc_input = inputdata['value_Koc']
     if Koc_input=="NULL":
         Koc = 0
     else:
         Koc = Koc_input
-    kd = float(inputdata['value_kd'])
+    foc = float(inputdata['value_foc'])
+    kd = 1#float(inputdata['value_kd'])
     # grid input start
     if Type == "sat":
-        Cmedium_input = inputdata['sat_soilconc']
+        Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
     elif Type == "unsat":
-        Cmedium_input = inputdata['unsat_soilconc']
+        Cmedium_input = Stringbreak(inputdata['unsat_soilconc'], column, row)
     else:
-        Cmedium_input = inputdata['sat_soilconc']
-        Cmedium2_input = inputdata['unsat_soilconc']
-    WT_input = inputdata['waterlevel']
-    LE_input = inputdata['elevation']
-    foc_input = inputdata['value_foc']
-    Geo_Type_input = inputdata['Geo_Type']
+        Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
+        Cmedium2_input = Stringbreak(inputdata['unsat_soilconc'], column, row)
+    WT_input = Stringbreak(inputdata['waterlevel'], column, row)
+    LE_input = Stringbreak(inputdata['elevation'], column, row)
+    Geo_Type_input = Stringbreak(inputdata['Geo_Type'], column, row)
     # Geo Type start
     try:
         hSA13 = float(inputdata['hSA_13'])
@@ -129,7 +126,7 @@ def singleSource():
     except:
         pass
     # Geo Type end
-    buildingType_input = inputdata['Found_Type']
+    buildingType_input = Stringbreak(inputdata['Found_Type'], column, row)
     # Building Type start
     try:
         Lb11 = float(inputdata['LB_11'])
@@ -223,40 +220,31 @@ def singleSource():
     except:
         pass
     # Building Type end
-    Ex_input = inputdata['Expo_Type']
+    Ex_input = Stringbreak(inputdata['Expo_Type'], column, row)
     # Ex start
     try:
         EF3 = float(inputdata['EF_3'])
         EF4 = float(inputdata['EF_4'])
         EF5 = float(inputdata['EF_5'])
-        EF6 = float(inputdata['EF_6'])
-        EF7 = float(inputdata['EF_7'])
     except:
         pass
     try:
         ED3 = float(inputdata['ED_3'])
         ED4 = float(inputdata['ED_4'])
         ED5 = float(inputdata['ED_5'])
-        ED6 = float(inputdata['ED_6'])
-        ED7 = float(inputdata['ED_7'])
     except:
         pass
     try:
         ET3 = float(inputdata['ET_3'])
         ET4 = float(inputdata['ET_4'])
         ET5 = float(inputdata['ET_5'])
-        ET6 = float(inputdata['ET_6'])
-        ET7 = float(inputdata['ET_7'])
     except:
         pass
     # Ex end
-    column = len(WT_input)
-    row = len(WT_input[0])
     Cmedium = [[0 for j in range(row)] for i in range(column)]
     Cmedium2 = [[0 for j in range(row)] for i in range(column)]
     WT = [[0 for j in range(row)] for i in range(column)]
     LE = [[0 for j in range(row)] for i in range(column)]
-    foc = [[0 for j in range(row)] for i in range(column)]
     Geo_Type = [[0 for j in range(row)] for i in range(column)]
     nSA = [[0 for j in range(row)] for i in range(column)]
     nwSA = [[0 for j in range(row)] for i in range(column)]
@@ -287,7 +275,6 @@ def singleSource():
                 Cmedium2[i][j] = float(Cmedium2_input[i][j])
             LE[i][j] = float(LE_input[i][j])
             WT[i][j] = float(WT_input[i][j])
-            foc[i][j] = float(foc_input[i][j])
             Geo_Type[i][j] = int(Geo_Type_input[i][j])
             if Geo_Type[i][j] == 1:
                 nSA[i][j] = 0.459
@@ -561,7 +548,7 @@ def singleSource():
                 Abf[i][j] = Abf14
                 Hb[i][j] = Hb14
                 ach[i][j] = ach14
-                Qsoil_Qb[i][j] = Qsoil_Qb11
+                Qsoil_Qb[i][j] = Qsoil_Qb14
             elif buildingType[i][j] == 15:
                 Lb[i][j] = Lb15
                 Lf[i][j] = Lf15
@@ -636,16 +623,6 @@ def singleSource():
                 EF[i][j] = EF5
                 ED[i][j] = ED5
                 ET[i][j] = ET5
-            elif Ex[i][j] == 6:
-                ATnc[i][j] = 25
-                EF[i][j] = EF6
-                ED[i][j] = ED6
-                ET[i][j] = ET6
-            elif Ex[i][j] == 7:
-                ATnc[i][j] = 25
-                EF[i][j] = EF7
-                ED[i][j] = ED7
-                ET[i][j] = ET7
     # constant, no grid param
     ATc = 70
     MMOAF = 72
@@ -715,14 +692,14 @@ def singleSource():
                 if Organic == 0:
                     ks[i][j] = kd
                 else:
-                    ks[i][j] = Koc*foc[i][j]
+                    ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
                 DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
                 A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA[i][j],nwSA[i][j],ks[i][j],nairSA[i][j])
                 B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
                 C_param_4a[i][j] = C_param_4a_cal(DeffA[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
-                if Qsoil[i][j] == 0:                                                                                    #check
+                if Qsoil[i][j] == 0:
                     VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
                 elif Qsoil[i][j] > 0:
                     VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
@@ -744,7 +721,7 @@ def singleSource():
                 if Organic == 0:
                     ks[i][j] = kd
                 else:
-                    ks[i][j] = Koc*foc[i][j]
+                    ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
                 DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
@@ -886,7 +863,7 @@ def singleSource():
 
 @app.route('/multipleSource', methods=['POST'])
 def multipleSource():
-    inputdata = request.get_json()
+    inputdata = request.get_json(silent=True)
     chem = [0 for i in range(5)]
     S = [0 for i in range(5)]
     Hc = [0 for i in range(5)]
@@ -986,14 +963,6 @@ def multipleSource():
     except:
         pass
     try:
-        MW[0] = float(inputdata['value_MW_1'])
-        MW[1] = float(inputdata['value_MW_2'])
-        MW[2] = float(inputdata['value_MW_3'])
-        MW[3] = float(inputdata['value_MW_4'])
-        MW[4] = float(inputdata['value_MW_5'])
-    except:
-        pass
-    try:
         IURt[0] = inputdata['value_IUR_1']
         if IURt[0]=="NULL":
             IUR[0] = 0
@@ -1022,7 +991,7 @@ def multipleSource():
     except:
         pass
     try:
-        Rfc[0] = inputdata['value_Rfc_1']
+        Rfct[0] = inputdata['value_Rfc_1']
         if Rfct[0]=="NULL":
             Rfc[0] = 0
         else:
@@ -1265,7 +1234,7 @@ def multipleSource():
                 VFsesp_4a[i] = VFsesp_4a_Qszero_cal(A_param_4a[i],C_param_4a[i],DeffT[i],Lf,Ls[i],DeffA[i],eta)
             elif Qsoil > 0:
                 VFsesp_4a[i] = VFsesp_4a_Qsnozero_cal(A_param_4a[i],C_param_4a[i],B_param[i])
-        # both
+        # both delete
         else:
             if Organic == 0:
                 ks[i] = kd
@@ -1372,6 +1341,26 @@ def multipleSource():
     }
     return jsonify(data)
 
+def Column_cal(str):
+    column = str.count("]") - 1
+    return column
+
+def Row_cal(str, column):
+    row = (str.count(",")+1)/column
+    return row
+
+def Stringbreak(str, column, row):
+    tmp = str.replace('[', '')
+    tmp1 = tmp.replace("]", '')
+    datat = tmp1.split(",")
+    k = 0
+    data  = [[0 for j in range(row)] for i in range(column)]
+    for i in range(column):
+        for j in range(row):
+            data[i][j] = datat[k]
+            k = k + 1
+    return data
+
 def DeffA_cal(Dair,nSA,nwSA,Dwater,Hs):
     DeffA = Dair*(math.pow((nSA-nwSA),3.33)/math.pow(nSA,2))+(Dwater/Hs)*(math.pow(nwSA,3.33)/math.pow(nSA,2))
     return DeffA
@@ -1449,4 +1438,4 @@ def Cnca_cal(THQ,Rfc,ATnc,EF,ED,ET):
     return Cnca
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=True)
