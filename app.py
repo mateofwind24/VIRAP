@@ -2,7 +2,7 @@ import math
 from flask import Flask, request, url_for, render_template, redirect, jsonify
 app = Flask(__name__)
 
-@app.route('/singleSource', methods=['POST'])
+@app.route('/singleSource', methods=['GET','POST'])
 def singleSource():
     inputdata = request.get_json()
     column = int(Column_cal(inputdata['waterlevel']))
@@ -27,7 +27,7 @@ def singleSource():
         Rfc = float(Rfc_input)
     Mut = inputdata['value_Mut']
     Type = inputdata['conc_type']
-    Ts = float(inputdata['Ts']) + 273.15
+    Ts = 293.15#float(inputdata['Ts']) + 273.15
     Organic = 0#int(inputdata['value_Organic'])
     Koc_input = inputdata['value_Koc']
     if Koc_input=="NULL":
@@ -609,17 +609,17 @@ def singleSource():
                 ED[i][j] = 25
                 ET[i][j] = 8
             elif Ex[i][j] == 3:
-                ATnc[i][j] = 25
+                ATnc[i][j] = 26
                 EF[i][j] = EF3
                 ED[i][j] = ED3
                 ET[i][j] = ET3
             elif Ex[i][j] == 4:
-                ATnc[i][j] = 25
+                ATnc[i][j] = 26
                 EF[i][j] = EF4
                 ED[i][j] = ED4
                 ET[i][j] = ET4
             elif Ex[i][j] == 5:
-                ATnc[i][j] = 25
+                ATnc[i][j] = 26
                 EF[i][j] = EF5
                 ED[i][j] = ED5
                 ET[i][j] = ET5
@@ -792,31 +792,10 @@ def singleSource():
                     HQ[i][j] = HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia[i][j],Rfc,ATnc[i][j]) + HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],Rfc,ATnc[i][j])
                 else:
                     HQ[i][j] = "NULL"
-    # Cca, Cnca calculate
-    mIURTCE_R = 1
-    IURTCE_R = 1
-    TCR = 1.0e-6
-    THQ = 1
-    Cca = [[0 for j in range(row)] for i in range(column)]
-    Cnca = [[0 for j in range(row)] for i in range(column)]
-    for i in range(column):
-        for j in range(row):
-            if chem == "Trichloroethylene":
-                Cca[i][j] = Cca_TCE_cal(EF[i][j],MMOAF,ET[i][j],mIURTCE_R,TCR,ATc,ED[i][j],IURTCE_R)
-                Cnca[i][j] = Cca[i][j]
-            else:
-                if IUR != 0 and Rfc != 0:
-                    Cca[i][j] = Cca_cal(TCR,ATc,EF[i][j],ED[i][j],ET[i][j],IUR)
-                    Cnca[i][j] = Cnca_cal(THQ,Rfc,ATnc[i][j],EF[i][j],ED[i][j],ET[i][j])
-                else:
-                    Cca[i][j] = "NULL"
-                    Cnca[i][j] = "NULL"
     if Type == "sat":
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "Cca": Cca,
-        "Cnca": Cnca,
         "DeffA": DeffA,
         "DeffCZ":DeffCZ,
         "DeffT":DeffT,
@@ -830,8 +809,6 @@ def singleSource():
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "Cca": Cca,
-        "Cnca": Cnca,
         "DeffA": DeffA,
         "DeffCZ":DeffCZ,
         "DeffT":DeffT,
@@ -845,8 +822,6 @@ def singleSource():
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "Cca": Cca,
-        "Cnca": Cnca,
         "DeffA": DeffA,
         "DeffCZ":DeffCZ,
         "DeffT":DeffT,
@@ -861,7 +836,7 @@ def singleSource():
         }
     return jsonify(data)
 
-@app.route('/multipleSource', methods=['POST'])
+@app.route('/multipleSource', methods=['GET','POST'])
 def multipleSource():
     inputdata = request.get_json(silent=True)
     chem = [0 for i in range(5)]
@@ -1213,7 +1188,7 @@ def multipleSource():
             DeffT[i] = DeffT_cal(hSA[i],Lb,hcz,DeffA[i],DeffCZ[i])
             A_param_6a[i] = A_param_6a_cal(DeffT[i],Abf,Lb,Qb,Ls[i])
             if Qsoil == 0:
-                VFwesp_6a[i] = VFwesp_6a_Qszero_cal(A_param_6a[i],DeffT[i],Lf,Ls,Lb,DeffA[i],eta)
+                VFwesp_6a[i] = VFwesp_6a_Qszero_cal(A_param_6a[i],DeffT[i],Lf,Ls[i],Lb,DeffA[i],eta)
             elif Qsoil > 0:
                 B_param[i] = B_param_cal(Qsoil_Qb,Qb,Lf,DeffA[i],eta,Abf,Lb)
                 C_param_6a[i] = C_param_6a_cal(Qsoil_Qb)
@@ -1234,110 +1209,48 @@ def multipleSource():
                 VFsesp_4a[i] = VFsesp_4a_Qszero_cal(A_param_4a[i],C_param_4a[i],DeffT[i],Lf,Ls[i],DeffA[i],eta)
             elif Qsoil > 0:
                 VFsesp_4a[i] = VFsesp_4a_Qsnozero_cal(A_param_4a[i],C_param_4a[i],B_param[i])
-        # both delete
-        else:
-            if Organic == 0:
-                ks[i] = kd
-            else:
-                ks[i] = Koc[i]*foc[i]
-            DeffA[i] = DeffA_cal(Dair[i],nSA,nwSA,Dwater[i],Hs[i])
-            DeffCZ[i] = DeffCZ_cal(Dair[i],ncz,nwcz,Dwater[i],Hs[i])
-            DeffT[i] = DeffT_cal(hSA[i],Lb,hcz,DeffA[i],DeffCZ[i])
-            A_param_6a[i] = A_param_6a_cal(DeffT[i],Abf,Lb,Qb,Ls[i])
-            B_param[i] = B_param_cal(Qsoil_Qb,Qb,Lf,DeffA[i],eta,Abf,Lb)
-            C_param_4a[i] = C_param_4a_cal(DeffA[i],Abf,Lb,Qb,Ls[i])
-            if Qsoil == 0:
-                VFwesp_6a[i] = VFwesp_6a_Qszero_cal(A_param_6a[i],DeffT[i],Lf,Ls,Lb,DeffA[i],eta)
-                VFsesp_4a[i] = VFsesp_4a_Qszero_cal(A_param_4a[i],C_param_4a[i],DeffT[i],Lf,Ls[i],DeffA[i],eta)
-            elif Qsoil > 0:
-                C_param_6a[i] = C_param_6a_cal(Qsoil_Qb)
-                VFwesp_6a[i] = VFwesp_6a_Qsnozero_cal(A_param_6a[i],B_param[i],C_param_6a[i])
-                VFsesp_4a[i] = VFsesp_4a_Qsnozero_cal(A_param_4a[i],C_param_4a[i],B_param[i])
     # Risk calculate loop
     mIURTCE_R_GW = 1.0e-6;
     IURTCE_R_GW = 3.1e-6;
     mIURTCE_C_GW = 4.1e-6;
     IURTCE_C_GW = 4.1e-6;
     Cia = [0 for i in range(chemNum)]
-    Cia2 = [0 for i in range(chemNum)]
     Risk = [0 for i in range(chemNum)]
     for i in range(chemNum):
         if Ex == 1:
             ATnc = 26
         else:
             ATnc = 25
-        if Type == "sat":
+        if Type[i] == "sat":
             Cia[i] = VFwesp_6a[i]*Cs[i]
-        elif Type == "unsat":
+        else:
             Cia[i] = VFsesp_4a[i]*Cs[i]
-        else:
-            Cia[i] = VFwesp_6a[i]*Cs[i]
-            Cia2[i] = VFsesp_4a[i]*Cs2[i]
-        if Type != "both":
-            if chem[i] == "Trichloroethylene" and Ex[i] == 1:
-                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
-            elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
-                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
-            elif Mut[i] == "No":
-                Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc)
-            elif Mut[i] == "Yes":
-                Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc)
-            elif Mut[i] == "VC" and Ex == 1:
-                Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
-            elif Mut[i] == "VC" and Ex == 2:
-                Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
-        else:
-            if chem[i] == "Trichloroethylene" and Ex[i] == 1:
-                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED) + Risk_TCE_cal(Cia2[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
-            elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
-                Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED) + Risk_TCE_cal(Cia2[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
-            elif Mut[i] == "No":
-                Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc) + Risk_noMut_cal(IUR[i],EF,ED,ET,Cia2[i],ATc)
-            elif Mut[i] == "Yes":
-                Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc) + Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia2[i],ATc)
-            elif Mut[i] == "VC" and Ex == 1:
-                Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24)) + Cia2[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
-            elif Mut[i] == "VC" and Ex == 2:
-                Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24) + Cia2[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
+        if chem[i] == "Trichloroethylene" and Ex[i] == 1:
+            Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
+        elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
+            Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
+        elif Mut[i] == "No":
+            Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc)
+        elif Mut[i] == "Yes":
+            Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc)
+        elif Mut[i] == "VC" and Ex == 1:
+            Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
+        elif Mut[i] == "VC" and Ex == 2:
+            Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
     # HQ calculate
     HQ = [0 for i in range(chemNum)]
     for i in range(chemNum):
-        if Type != "both":
-            if Rfc[i] != 0:
-                HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc)
-            else:
-                HQ[i] = "NULL"
+        if Rfc[i] != 0:
+            HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc)
         else:
-            if Rfc[i] != 0:
-                HQ[i] = HQ_cal(EF,ED,ET,Cia[i],Rfc[i],ATnc) + HQ_cal(EF,ED,ET,Cia2[i],Rfc[i],ATnc)
-            else:
-                HQ[i] = "NULL"
-    # Cca, Cnca calculate
-    mIURTCE_R = 1
-    IURTCE_R = 1
-    TCR = 1.0e-6
-    THQ = 1
-    Cca = [0 for i in range(chemNum)]
-    Cnca = [0 for i in range(chemNum)]
-    for i in range(chemNum):
-        if chem[i] == "Trichloroethylene":
-            Cca[i] = Cca_TCE_cal(EF,MMOAF,ET,mIURTCE_R,TCR,ATc,ED,IURTCE_R)
-            Cnca[i] = Cca[i]
-        else:
-            if IUR[i] != 0 and Rfc[i] != 0:
-                Cca[i] = Cca_cal(TCR,ATc,EF,ED,ET,IUR[i])
-                Cnca[i] = Cnca_cal(THQ,Rfc[i],ATnc,EF,ED,ET)
-            else:
-                Cca[i] = "NULL"
-                Cnca[i] = "NULL"
+            HQ[i] = "NULL"
     data = {
     "VFwesp": VFwesp_6a,
     "VFsesp": VFsesp_4a,
     "Qsoil": Qsoil,
     "Risk": Risk,
     "HQ": HQ,
-    "Cca": Cca,
-    "Cnca": Cnca
+    "Cia": Cia
     }
     return jsonify(data)
 
@@ -1424,18 +1337,6 @@ def Risk_yesMut_cal(IUR,EF,MMOAF,ET,Cia,ATc):
 def HQ_cal(EF,ED,ET,Cia,Rfc,ATnc):
     HQ = (EF*ED*(ET/24)*Cia)/(Rfc*1000*ATnc*365)
     return HQ
-
-def Cca_TCE_cal(EF,MMOAF,ET,mIURTCE_R,TCR,ATc,ED,IURTCE_R):
-    Cca_TCE = 1/((EF*MMOAF*ET*mIURTCE_R/(TCR*ATc*365*24))+EF*ED*ET*IURTCE_R/(TCR*ATc*365*24))
-    return Cca_TCE
-
-def Cca_cal(TCR,ATc,EF,ED,ET,IUR):
-    Cca = (TCR*ATc*365*24)/(EF*ED*ET*IUR)
-    return Cca
-
-def Cnca_cal(THQ,Rfc,ATnc,EF,ED,ET):
-    Cnca = (THQ*Rfc*ATnc*365*24*1000)/(EF*ED*ET)
-    return Cnca
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=3000, debug=True)
