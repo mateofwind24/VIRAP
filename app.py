@@ -2,7 +2,7 @@ import math
 from flask import Flask, request, url_for, render_template, redirect, jsonify
 app = Flask(__name__)
 
-@app.route('/singleSource', methods=['GET','POST'])
+@app.route('/singleSource', methods=['GET','POST','PUT','PATCH'])
 def singleSource():
     inputdata = request.get_json()
     column = int(Column_cal(inputdata['waterlevel']))
@@ -27,7 +27,11 @@ def singleSource():
         Rfc = float(Rfc_input)
     Mut = inputdata['value_Mut']
     Type = inputdata['conc_type']
-    Ts = 293.15#float(inputdata['Ts']) + 273.15
+    Ts = 293.15
+    try:
+        Ts = float(inputdata['Ts']) + 273.15
+    except:
+        pass
     Organic = 0#int(inputdata['value_Organic'])
     Koc_input = inputdata['value_Koc']
     if Koc_input=="NULL":
@@ -836,7 +840,7 @@ def singleSource():
         }
     return jsonify(data)
 
-@app.route('/multipleSource', methods=['GET','POST'])
+@app.route('/multipleSource', methods=['GET','POST','PUT','PATCH'])
 def multipleSource():
     inputdata = request.get_json(silent=True)
     chem = [0 for i in range(5)]
@@ -1002,11 +1006,11 @@ def multipleSource():
     except:
         pass
     try:
-        Organic[0] = float(inputdata['value_Organic_1'])
-        Organic[1] = float(inputdata['value_Organic_2'])
-        Organic[2] = float(inputdata['value_Organic_3'])
-        Organic[3] = float(inputdata['value_Organic_4'])
-        Organic[4] = float(inputdata['value_Organic_5'])
+        Organic[0] = 1#float(inputdata['value_Organic_1'])
+        Organic[1] = 1#float(inputdata['value_Organic_2'])
+        Organic[2] = 1#float(inputdata['value_Organic_3'])
+        Organic[3] = 1#float(inputdata['value_Organic_4'])
+        Organic[4] = 1#float(inputdata['value_Organic_5'])
     except:
         pass
     try:
@@ -1115,10 +1119,10 @@ def multipleSource():
         LE[4] = float(inputdata['elevation_5'])
     except:
         pass
-    kd = float(inputdata['kd'])
+    kd = 1#float(inputdata['kd'])
     nSA = float(inputdata['nSA'])
     nwSA = float(inputdata['nwSA'])
-    nairSA = float(inputdata['nairSA'])
+    nairSA = nSA - nwSA
     rhoSA = float(inputdata['rhoSA'])
     hcz = float(inputdata['hcz'])
     ncz = float(inputdata['ncz'])
@@ -1149,7 +1153,6 @@ def multipleSource():
     Ls = [0 for i in range(5)]
     hSA = [0 for i in range(5)]
     Cs = [0 for i in range(chemNum)]
-    Cs2 = [0 for i in range(chemNum)]
     for i in range(chemNum):
         Tb_Tc[i] = Tb[i]/Tc[i]
         if Tb_Tc[i]<=0.57:
@@ -1163,11 +1166,7 @@ def multipleSource():
         Hs[i] = (math.exp(-(DHvs[i]/Rc)*(1/Ts[i]-1/Tr))*Hc[i])/(R*Ts[i])
         Ls[i] = LE[i]-WT[i]
         hSA[i] = Ls[i]
-        if Type != "both":
-            Cs[i] = Hs[i]*Cmedium[i]*1000
-        else:
-            Cs[i] = Hs[i]*Cmedium[i]*1000
-            Cs2[i] = Hs[i]*Cmedium2[i]*1000
+        Cs[i] = Hs[i]*Cmedium[i]*1000
     # VFwesp calculate CM6a
     DeffA = [0 for i in range(chemNum)]
     DeffCZ = [0 for i in range(chemNum)]
