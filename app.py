@@ -27,7 +27,7 @@ def singleSource():
         Rfc = float(Rfc_input)
     Mut = inputdata['value_Mut']
     Type = inputdata['conc_type']
-    Ts = 293.15
+    Ts = 288.15
     try:
         Ts = float(inputdata['Ts']) + 273.15
     except:
@@ -244,6 +244,18 @@ def singleSource():
         ET5 = float(inputdata['ET_5'])
     except:
         pass
+    try:
+        ATc3 = float(inputdata['ATC_3'])
+        ATc4 = float(inputdata['ATc_4'])
+        ATc5 = float(inputdata['ATc_5'])
+    except:
+        pass
+    try:
+        ATnc3 = float(inputdata['ATnc_3'])
+        ATnc4 = float(inputdata['ATnc_4'])
+        ATnc5 = float(inputdata['ATnc_5'])
+    except:
+        pass
     # Ex end
     Cmedium = [[0 for j in range(row)] for i in range(column)]
     Cmedium2 = [[0 for j in range(row)] for i in range(column)]
@@ -267,6 +279,7 @@ def singleSource():
     Qsoil_Qb = [[0 for j in range(row)] for i in range(column)]
     Ex = [[0 for j in range(row)] for i in range(column)]
     ATnc = [[0 for j in range(row)] for i in range(column)]
+    ATc = [[0 for j in range(row)] for i in range(column)]
     EF = [[0 for j in range(row)] for i in range(column)]
     ED = [[0 for j in range(row)] for i in range(column)]
     ET = [[0 for j in range(row)] for i in range(column)]
@@ -603,32 +616,36 @@ def singleSource():
                 Qsoil_Qb[i][j] = Qsoil_Qb20
             Ex[i][j] = int(Ex_input[i][j])
             if Ex[i][j] == 1:
+                ATc[i][j] = 70
                 ATnc[i][j] = 26
                 EF[i][j] = 350
                 ED[i][j] = 26
                 ET[i][j] = 24
             elif Ex[i][j] == 2:
+                ATc[i][j] = 70
                 ATnc[i][j] = 25
                 EF[i][j] = 250
                 ED[i][j] = 25
                 ET[i][j] = 8
             elif Ex[i][j] == 3:
-                ATnc[i][j] = 26
+                ATc[i][j] = ATc3
+                ATnc[i][j] = ATnc3
                 EF[i][j] = EF3
                 ED[i][j] = ED3
                 ET[i][j] = ET3
             elif Ex[i][j] == 4:
-                ATnc[i][j] = 26
+                ATc[i][j] = ATc4
+                ATnc[i][j] = ATnc4
                 EF[i][j] = EF4
                 ED[i][j] = ED4
                 ET[i][j] = ET4
             elif Ex[i][j] == 5:
-                ATnc[i][j] = 26
+                ATc[i][j] = ATc5
+                ATnc[i][j] = ATnc5
                 EF[i][j] = EF5
                 ED[i][j] = ED5
                 ET[i][j] = ET5
     # constant, no grid param
-    ATc = 70
     MMOAF = 72
     Rc = 1.987
     Tr = 298.1
@@ -756,32 +773,32 @@ def singleSource():
                 elif Type == "unsat":
                     Cia[i][j] = VFsesp_4a[i][j]*Cs[i][j]
                 if chem == "Trichloroethylene" and Ex[i][j] == 1:
-                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j])
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_R_GW,ED[i][j])
                 elif chem == "Trichloroethylene" and Ex[i][j] == 2:
-                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_C_GW,ED[i][j])
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_C_GW,ED[i][j])
                 elif Mut == "No":
-                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc)
+                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc[i][j])
                 elif Mut == "Yes":
-                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc)
+                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc[i][j])
                 elif Mut == "VC" and Ex[i][j] == 1:
-                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24))
+                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24))
                 elif Mut == "VC" and Ex[i][j] == 2:
-                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)
+                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24)
             else:
                 Cia[i][j] = VFwesp_6a[i][j]*Cs[i][j]
                 Cia2[i][j] = VFsesp_4a[i][j]*Cs2[i][j]
                 if chem == "Trichloroethylene" and Ex[i][j] == 1:
-                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j]) + Risk_TCE_cal(Cia2[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_R_GW,ED[i][j])
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_R_GW,ED[i][j]) + Risk_TCE_cal(Cia2[i][j],mIURTCE_R_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_R_GW,ED[i][j])
                 elif chem == "Trichloroethylene" and Ex[i][j] == 2:
-                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_C_GW,ED[i][j]) + Risk_TCE_cal(Cia2[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc,IURTCE_C_GW,ED[i][j])
+                    Risk[i][j] = Risk_TCE_cal(Cia[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_C_GW,ED[i][j]) + Risk_TCE_cal(Cia2[i][j],mIURTCE_C_GW,MMOAF,EF[i][j],ET[i][j],ATc[i][j],IURTCE_C_GW,ED[i][j])
                 elif Mut == "No":
-                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc) + Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],ATc)
+                    Risk[i][j] = Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia[i][j],ATc[i][j]) + Risk_noMut_cal(IUR,EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],ATc[i][j])
                 elif Mut == "Yes":
-                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc) + Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia2[i][j],ATc)
+                    Risk[i][j] = Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia[i][j],ATc[i][j]) + Risk_yesMut_cal(IUR,EF[i][j],MMOAF,ET[i][j],Cia2[i][j],ATc[i][j])
                 elif Mut == "VC" and Ex[i][j] == 1:
-                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)) + Cia2[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24))
+                    Risk[i][j] = Cia[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24)) + Cia2[i][j]*(IUR+(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24))
                 elif Mut == "VC" and Ex[i][j] == 2:
-                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24) + Cia2[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc*365*24)
+                    Risk[i][j] = Cia[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24) + Cia2[i][j]*(IUR*ED[i][j]*EF[i][j]*ET[i][j])/(ATc[i][j]*365*24)
     # HQ calculate
     HQ = [[0 for j in range(row)] for i in range(column)]
     for i in range(column):
@@ -1138,7 +1155,8 @@ def multipleSource():
     EF = int(inputdata['EF'])
     ED = int(inputdata['ED'])
     ET = int(inputdata['ET'])
-    ATc = 70
+    ATc = int(inputdata['ATc'])
+    ATnc = int(inputdata['ATnc'])
     MMOAF = 72
     Rc = 1.987
     Tr = 298.1
@@ -1216,10 +1234,6 @@ def multipleSource():
     Cia = [0 for i in range(chemNum)]
     Risk = [0 for i in range(chemNum)]
     for i in range(chemNum):
-        if Ex == 1:
-            ATnc = 26
-        else:
-            ATnc = 25
         if Type[i] == "sat":
             Cia[i] = VFwesp_6a[i]*Cs[i]
         else:
