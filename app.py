@@ -1151,7 +1151,7 @@ def multipleSource():
     Hb = float(inputdata['Hb'])
     ach = float(inputdata['ach'])
     Qsoil_Qb = float(inputdata['Qsoil_Qb'])
-    Ex = int(inputdata['expType'])
+    Ex = inputdata['expType']
     EF = int(inputdata['EF'])
     ED = int(inputdata['ED'])
     ET = int(inputdata['ET'])
@@ -1238,17 +1238,17 @@ def multipleSource():
             Cia[i] = VFwesp_6a[i]*Cs[i]
         else:
             Cia[i] = VFsesp_4a[i]*Cs[i]
-        if chem[i] == "Trichloroethylene" and Ex[i] == 1:
+        if chem[i] == "Trichloroethylene" and Ex == "residential":
             Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_R_GW,MMOAF,EF,ET,ATc,IURTCE_R_GW,ED)
-        elif chem[i] == "Trichloroethylene" and Ex[i] == 2:
+        elif chem[i] == "Trichloroethylene" and Ex == "commercial":
             Risk[i] = Risk_TCE_cal(Cia[i],mIURTCE_C_GW,MMOAF,EF,ET,ATc,IURTCE_C_GW,ED)
         elif Mut[i] == "No":
             Risk[i] = Risk_noMut_cal(IUR[i],EF,ED,ET,Cia[i],ATc)
         elif Mut[i] == "Yes":
             Risk[i] = Risk_yesMut_cal(IUR[i],EF,MMOAF,ET,Cia[i],ATc)
-        elif Mut[i] == "VC" and Ex == 1:
+        elif Mut[i] == "VC" and Ex == "residential":
             Risk[i] = Cia[i]*(IUR[i]+(IUR[i]*ED*EF*ET)/(ATc*365*24))
-        elif Mut[i] == "VC" and Ex == 2:
+        elif Mut[i] == "VC" and Ex == "commercial":
             Risk[i] = Cia[i]*(IUR[i]*ED*EF*ET)/(ATc*365*24)
     # HQ calculate
     HQ = [0 for i in range(chemNum)]
