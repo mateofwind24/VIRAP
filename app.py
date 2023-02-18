@@ -32,14 +32,14 @@ def singleSource():
         Ts = float(inputdata['Ts']) + 273.15
     except:
         pass
-    Organic = 0#int(inputdata['value_Organic'])
+    Organic = 1#int(inputdata['value_Organic'])
     Koc_input = inputdata['value_Koc']
     if Koc_input=="NULL":
         Koc = 0
     else:
         Koc = Koc_input
     foc = float(inputdata['value_foc'])
-    kd = 1#float(inputdata['value_kd'])
+    Kow = float(inputdata['value_Kow'])
     # grid input start
     if Type == "sat":
         Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
@@ -51,6 +51,12 @@ def singleSource():
     WT_input = Stringbreak(inputdata['waterlevel'], column, row)
     LE_input = Stringbreak(inputdata['elevation'], column, row)
     Geo_Type_input = Stringbreak(inputdata['Geo_Type'], column, row)
+    mult = False
+    try:
+        DeffT_input = Stringbreak(inputdata['DeffT'], column, row)
+        mult = True
+    except:
+        pass
     # Geo Type start
     try:
         hSA13 = float(inputdata['hSA_13'])
@@ -283,6 +289,7 @@ def singleSource():
     EF = [[0 for j in range(row)] for i in range(column)]
     ED = [[0 for j in range(row)] for i in range(column)]
     ET = [[0 for j in range(row)] for i in range(column)]
+    DeffTtmp = [[0 for j in range(row)] for i in range(column)]
     for i in range(column):
         for j in range(row):
             if Type != "both":
@@ -292,6 +299,8 @@ def singleSource():
                 Cmedium2[i][j] = float(Cmedium2_input[i][j])
             LE[i][j] = float(LE_input[i][j])
             WT[i][j] = float(WT_input[i][j])
+            if mult:
+                DeffTtmp[i][j] = float(DeffT_input[i][j])
             Geo_Type[i][j] = int(Geo_Type_input[i][j])
             if Geo_Type[i][j] == 1:
                 nSA[i][j] = 0.459
@@ -690,7 +699,10 @@ def singleSource():
             for j in range(row):
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
+                if mult:
+                    DeffT[i][j] = DeffTtmp[i][j]
+                else:
+                    DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
                     VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA[i][j],eta[i][j])
@@ -711,7 +723,7 @@ def singleSource():
         for i in range(column):
             for j in range(row):
                 if Organic == 0:
-                    ks[i][j] = kd
+                    ks[i][j] = Kow*foc
                 else:
                     ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
@@ -740,7 +752,7 @@ def singleSource():
         for i in range(column):
             for j in range(row):
                 if Organic == 0:
-                    ks[i][j] = kd
+                    ks[i][j] = Kow*foc
                 else:
                     ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
@@ -880,6 +892,7 @@ def multipleSource():
     Cmedium = [0 for i in range(5)]
     Cmedium2 = [0 for i in range(5)]
     foc = [0 for i in range(5)]
+    Kow = [0 for i in range(5)]
     Ts = [0 for i in range(5)]
     Type = [0 for i in range(5)]
     WT = [0 for i in range(5)]
@@ -1067,6 +1080,14 @@ def multipleSource():
     except:
         pass
     try:
+        Kow[0] = float(inputdata['value_Kow_1'])
+        Kow[1] = float(inputdata['value_Kow_2'])
+        Kow[2] = float(inputdata['value_Kow_3'])
+        Kow[3] = float(inputdata['value_Kow_4'])
+        Kow[4] = float(inputdata['value_Kow_5'])
+    except:
+        pass
+    try:
         Ts[0] = float(inputdata['value_Ts_1']) + 273.15
         Ts[1] = float(inputdata['value_Ts_2']) + 273.15
         Ts[2] = float(inputdata['value_Ts_3']) + 273.15
@@ -1213,7 +1234,7 @@ def multipleSource():
         # VFsesp calculate CM4
         elif Type[i] == "unsat":
             if Organic == 0:
-                ks[i] = kd
+                ks[i] = Kow[i]*foc[i]
             else:
                 ks[i] = Koc[i]*foc[i]
             DeffA[i] = DeffA_cal(Dair[i],nSA,nwSA,Dwater[i],Hs[i])
