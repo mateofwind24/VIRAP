@@ -1157,7 +1157,6 @@ def multipleSource():
         LE[4] = float(inputdata['elevation_5'])
     except:
         pass
-    kd = 1#float(inputdata['kd'])
     nSA = float(inputdata['nSA'])
     nwSA = float(inputdata['nwSA'])
     nairSA = nSA - nwSA
@@ -1279,9 +1278,6 @@ def multipleSource():
         else:
             HQ[i] = "NULL"
     data = {
-    "VFwesp": VFwesp_6a,
-    "VFsesp": VFsesp_4a,
-    "Qsoil": Qsoil,
     "Risk": Risk,
     "HQ": HQ,
     "Cia": Cia
