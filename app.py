@@ -1104,41 +1104,11 @@ def multipleSource():
     except:
         pass
     try:
-        if Type[0] == "sat":
-            Cmedium[0] = float(inputdata['sat_soilconc_1'])
-        elif Type[0] == "unsat":
-            Cmedium[0] = float(inputdata['unsat_soilconc_1'])
-        else:
-            Cmedium[0] = float(inputdata['sat_soilconc_1'])
-            Cmedium2[0] = float(inputdata['unsat_soilconc_1'])
-        if Type[1] == "sat":
-            Cmedium[1] = float(inputdata['sat_soilconc_2'])
-        elif Type[1] == "unsat":
-            Cmedium[1] = float(inputdata['unsat_soilconc_2'])
-        else:
-            Cmedium[1] = float(inputdata['sat_soilconc_2'])
-            Cmedium2[1] = float(inputdata['unsat_soilconc_2'])
-        if Type[2] == "sat":
-            Cmedium[2] = float(inputdata['sat_soilconc_3'])
-        elif Type[2] == "unsat":
-            Cmedium[2] = float(inputdata['unsat_soilconc_3'])
-        else:
-            Cmedium[2] = float(inputdata['sat_soilconc_3'])
-            Cmedium2[2] = float(inputdata['unsat_soilconc_3'])
-        if Type[3] == "sat":
-            Cmedium[3] = float(inputdata['sat_soilconc_4'])
-        elif Type[3] == "unsat":
-            Cmedium[3] = float(inputdata['unsat_soilconc_4'])
-        else:
-            Cmedium[3] = float(inputdata['sat_soilconc_4'])
-            Cmedium2[3] = float(inputdata['unsat_soilconc_4'])
-        if Type[4] == "sat":
-            Cmedium[4] = float(inputdata['sat_soilconc_5'])
-        elif Type[4] == "unsat":
-            Cmedium[4] = float(inputdata['unsat_soilconc_5'])
-        else:
-            Cmedium[4] = float(inputdata['sat_soilconc_5'])
-            Cmedium2[4] = float(inputdata['unsat_soilconc_5'])
+        Cmedium[0] = float(inputdata['soilconc_1'])
+        Cmedium[1] = float(inputdata['soilconc_2'])
+        Cmedium[2] = float(inputdata['soilconc_3'])
+        Cmedium[3] = float(inputdata['soilconc_4'])
+        Cmedium[4] = float(inputdata['soilconc_5'])
     except:
         pass
     try:
