@@ -890,9 +890,7 @@ def multipleSource():
     Koc = [0 for i in range(5)]
     Koct = [0 for i in range(5)]
     Cmedium = [0 for i in range(5)]
-    Cmedium2 = [0 for i in range(5)]
     foc = [0 for i in range(5)]
-    Kow = [0 for i in range(5)]
     Ts = [0 for i in range(5)]
     Type = [0 for i in range(5)]
     WT = [0 for i in range(5)]
@@ -1088,11 +1086,11 @@ def multipleSource():
     except:
         pass
     try:
-        Ts[0] = float(inputdata['value_Ts_1']) + 273.15
-        Ts[1] = float(inputdata['value_Ts_2']) + 273.15
-        Ts[2] = float(inputdata['value_Ts_3']) + 273.15
-        Ts[3] = float(inputdata['value_Ts_4']) + 273.15
-        Ts[4] = float(inputdata['value_Ts_5']) + 273.15
+        Ts[0] = float(inputdata['Ts_1']) + 291.15
+        Ts[1] = float(inputdata['Ts_2']) + 273.15
+        Ts[2] = float(inputdata['Ts_3']) + 273.15
+        Ts[3] = float(inputdata['Ts_4']) + 273.15
+        Ts[4] = float(inputdata['Ts_5']) + 273.15
     except:
         pass
     try:
@@ -1202,10 +1200,7 @@ def multipleSource():
                 VFwesp_6a[i] = VFwesp_6a_Qsnozero_cal(A_param_6a[i],B_param[i],C_param_6a[i])
         # VFsesp calculate CM4
         elif Type[i] == "unsat":
-            if Organic == 0:
-                ks[i] = Kow[i]*foc[i]
-            else:
-                ks[i] = Koc[i]*foc[i]
+            ks[i] = Koc[i]*foc[i]
             DeffA[i] = DeffA_cal(Dair[i],nSA,nwSA,Dwater[i],Hs[i])
             DeffCZ[i] = DeffCZ_cal(Dair[i],ncz,nwcz,Dwater[i],Hs[i])
             DeffT[i] = DeffT_cal(hSA[i],Lb,hcz,DeffA[i],DeffCZ[i])
