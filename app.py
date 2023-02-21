@@ -32,14 +32,12 @@ def singleSource():
         Ts = float(inputdata['Ts']) + 273.15
     except:
         pass
-    Organic = 1#int(inputdata['value_Organic'])
     Koc_input = inputdata['value_Koc']
     if Koc_input=="NULL":
         Koc = 0
     else:
         Koc = Koc_input
     foc = float(inputdata['value_foc'])
-    Kow = float(inputdata['value_Kow'])
     # grid input start
     if Type == "sat":
         Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
@@ -52,23 +50,10 @@ def singleSource():
     LE_input = Stringbreak(inputdata['elevation'], column, row)
     Geo_Type_input = Stringbreak(inputdata['Geo_Type'], column, row)
     mult = False
-    try:
-        DeffT_input = Stringbreak(inputdata['DeffT'], column, row)
+    DeffTtmp = float(inputdata['DeffT'])
+    if DeffTtmp!="null":
         mult = True
-    except:
-        pass
     # Geo Type start
-    try:
-        hSA13 = float(inputdata['hSA_13'])
-        hSA14 = float(inputdata['hSA_14'])
-        hSA15 = float(inputdata['hSA_15'])
-        hSA16 = float(inputdata['hSA_16'])
-        hSA17 = float(inputdata['hSA_17'])
-        hSA18 = float(inputdata['hSA_18'])
-        hSA19 = float(inputdata['hSA_19'])
-        hSA20 = float(inputdata['hSA_20'])
-    except:
-        pass
     try:
         nSA13 = float(inputdata['nSA_13'])
         nSA14 = float(inputdata['nSA_14'])
@@ -289,7 +274,6 @@ def singleSource():
     EF = [[0 for j in range(row)] for i in range(column)]
     ED = [[0 for j in range(row)] for i in range(column)]
     ET = [[0 for j in range(row)] for i in range(column)]
-    DeffTtmp = [[0 for j in range(row)] for i in range(column)]
     for i in range(column):
         for j in range(row):
             if Type != "both":
@@ -299,8 +283,6 @@ def singleSource():
                 Cmedium2[i][j] = float(Cmedium2_input[i][j])
             LE[i][j] = float(LE_input[i][j])
             WT[i][j] = float(WT_input[i][j])
-            if mult:
-                DeffTtmp[i][j] = float(DeffT_input[i][j])
             Geo_Type[i][j] = int(Geo_Type_input[i][j])
             if Geo_Type[i][j] == 1:
                 nSA[i][j] = 0.459
@@ -700,7 +682,7 @@ def singleSource():
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
                 if mult:
-                    DeffT[i][j] = DeffTtmp[i][j]
+                    DeffT[i][j] = DeffTtmp
                 else:
                     DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
@@ -711,7 +693,7 @@ def singleSource():
                     C_param_6a[i][j] = C_param_6a_cal(Qsoil_Qb[i][j])
                     VFwesp_6a[i][j] = VFwesp_6a_Qsnozero_cal(A_param_6a[i][j],B_param[i][j],C_param_6a[i][j])
     # VFsesp calculate CM4
-    if Type == "unsat":
+    elif Type == "unsat":
         ks = [[0 for j in range(row)] for i in range(column)]
         DeffA = [[0 for j in range(row)] for i in range(column)]
         DeffCZ = [[0 for j in range(row)] for i in range(column)]
@@ -722,10 +704,7 @@ def singleSource():
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
         for i in range(column):
             for j in range(row):
-                if Organic == 0:
-                    ks[i][j] = Kow*foc
-                else:
-                    ks[i][j] = Koc*foc
+                ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
                 DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
@@ -737,7 +716,7 @@ def singleSource():
                 elif Qsoil[i][j] > 0:
                     VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
     # CM4 and CM6 both
-    if Type == "both":
+    else:
         ks = [[0 for j in range(row)] for i in range(column)]
         DeffA = [[0 for j in range(row)] for i in range(column)]
         DeffCZ = [[0 for j in range(row)] for i in range(column)]
@@ -751,10 +730,7 @@ def singleSource():
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
         for i in range(column):
             for j in range(row):
-                if Organic == 0:
-                    ks[i][j] = Kow*foc
-                else:
-                    ks[i][j] = Koc*foc
+                ks[i][j] = Koc*foc
                 DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
                 DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
                 DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
@@ -880,13 +856,11 @@ def multipleSource():
     DHvb = [0 for i in range(5)]
     Tc = [0 for i in range(5)]
     Tb = [0 for i in range(5)]
-    MW = [0 for i in range(5)]
     IUR = [0 for i in range(5)]
     IURt = [0 for i in range(5)]
     Rfc = [0 for i in range(5)]
     Rfct = [0 for i in range(5)]
     Mut = [0 for i in range(5)]
-    Organic = [0 for i in range(5)]
     Koc = [0 for i in range(5)]
     Koct = [0 for i in range(5)]
     Cmedium = [0 for i in range(5)]
@@ -1034,14 +1008,6 @@ def multipleSource():
     except:
         pass
     try:
-        Organic[0] = 1#float(inputdata['value_Organic_1'])
-        Organic[1] = 1#float(inputdata['value_Organic_2'])
-        Organic[2] = 1#float(inputdata['value_Organic_3'])
-        Organic[3] = 1#float(inputdata['value_Organic_4'])
-        Organic[4] = 1#float(inputdata['value_Organic_5'])
-    except:
-        pass
-    try:
         Koct[0] = float(inputdata['value_Koc_1'])
         if Koct[0]=="NULL":
             Koc[0] = 0
@@ -1086,7 +1052,7 @@ def multipleSource():
     except:
         pass
     try:
-        Ts[0] = float(inputdata['Ts_1']) + 291.15
+        Ts[0] = float(inputdata['Ts_1']) + 273.15
         Ts[1] = float(inputdata['Ts_2']) + 273.15
         Ts[2] = float(inputdata['Ts_3']) + 273.15
         Ts[3] = float(inputdata['Ts_4']) + 273.15
@@ -1169,7 +1135,7 @@ def multipleSource():
             n[i] = 0.41
         Hr[i] = Hc[i]/(0.000082057*298)
         DHvs[i] = DHvb[i]*(math.pow((1-Ts[i]/Tc[i])/(1-Tb[i]/Tc[i]),n[i]))
-        Hs[i] = (math.exp(-(DHvs[i]/Rc)*(1/Ts[i]-1/Tr))*Hc[i])/(R*Ts[i])
+        Hs[i] = (math.exp(-(DHvs[i]/Rc)*((1/Ts[i])-(1/Tr)))*Hc[i])/(R*Ts[i])
         Ls[i] = LE[i]-WT[i]
         hSA[i] = Ls[i]
         Cs[i] = Hs[i]*Cmedium[i]*1000
@@ -1245,7 +1211,13 @@ def multipleSource():
     data = {
     "Risk": Risk,
     "HQ": HQ,
-    "Cia": Cia
+    "Cia": Cia,
+    "Cs": Cs,
+    "VFwesp": VFwesp_6a,
+    "DeffT": DeffT,
+    "Hs": Hs,
+    "n": n,
+    "DHvs": DHvs
     }
     return jsonify(data)
 
