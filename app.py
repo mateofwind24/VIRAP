@@ -1,8 +1,21 @@
 import math
 from flask import Flask, request, url_for, render_template, redirect, jsonify
+from flask_cors import CORS
 app = Flask(__name__)
 
-@app.route('/singleSource', methods=['GET','POST','PUT','PATCH'])
+HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
+
+CORS(app)
+
+@app.after_request
+def set_response_headers(r):
+    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    r.headers['Pragma'] = 'no-cache'
+    r.headers['Expires'] = '0'
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+
+@app.route('/singleSource', methods=HTTP_METHODS)
 def singleSource():
     inputdata = request.get_json()
     column = int(Column_cal(inputdata['waterlevel']))
@@ -50,8 +63,8 @@ def singleSource():
     LE_input = Stringbreak(inputdata['elevation'], column, row)
     Geo_Type_input = Stringbreak(inputdata['Geo_Type'], column, row)
     mult = False
-    DeffTtmp = float(inputdata['DeffT'])
-    if DeffTtmp!="null":
+    if inputdata['DeffT']!=None:
+        DeffTtmp = float(inputdata['DeffT'])
         mult = True
     # Geo Type start
     try:
@@ -452,7 +465,7 @@ def singleSource():
                 Abf[i][j] = 150
                 Hb[i][j] = 1.3
                 ach[i][j] = 0.45
-                Qsoil_Qb[i][j] =0.003 
+                Qsoil_Qb[i][j] =0.003
             elif buildingType[i][j] == 2:
                 Lb[i][j] = 1
                 Lf[i][j] = 0
@@ -845,7 +858,7 @@ def singleSource():
         }
     return jsonify(data)
 
-@app.route('/multipleSource', methods=['GET','POST','PUT','PATCH'])
+@app.route('/multipleSource', methods=HTTP_METHODS)
 def multipleSource():
     inputdata = request.get_json(silent=True)
     chem = [0 for i in range(5)]
