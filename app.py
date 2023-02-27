@@ -1,4 +1,24 @@
 import math
+from flask import Flask, request, url_for, render_template, redirect, jsonify, Response
+from flask_cors import CORS
+#from flask_jwt_extended import JWTManager, create_access_token
+
+app = Flask(__name__)
+CORS(app)
+'''
+app.config.update(
+    DEBUG = True,
+    JWT_SECRET_KEY = "1234"
+    )
+jwt = JWTManager(app)
+'''
+@app.before_request
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
+
+HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
+
 from flask import Flask, request, url_for, render_template, redirect, jsonify
 from flask_cors import CORS
 app = Flask(__name__)
@@ -818,42 +838,18 @@ def singleSource():
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "DeffA": DeffA,
-        "DeffCZ":DeffCZ,
-        "DeffT":DeffT,
-        "Aparam":A_param_6a,
-        "Bparam":B_param,
-        "Cparam":C_param_6a,
-        "VFwesp":VFwesp_6a,
         "Cia":Cia
         }
     elif Type == "unsat":
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "DeffA": DeffA,
-        "DeffCZ":DeffCZ,
-        "DeffT":DeffT,
-        "Aparam":A_param_4a,
-        "Bparam":B_param,
-        "Cparam":C_param_4a,
-        "VFsesp":VFsesp_4a,
         "Cia":Cia
         }
     elif Type == "both":
         data = {
         "Risk": Risk,
         "HQ": HQ,
-        "DeffA": DeffA,
-        "DeffCZ":DeffCZ,
-        "DeffT":DeffT,
-        "Aparam":A_param_6a,
-        "Aparam":A_param_4a,
-        "Bparam":B_param,
-        "Cparam":C_param_6a,
-        "Cparam":C_param_4a,
-        "VFwesp":VFwesp_6a,
-        "VFsesp":VFsesp_4a,
         "Cia":Cia
         }
     return jsonify(data)
