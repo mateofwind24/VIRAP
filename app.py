@@ -11,6 +11,14 @@ app.config.update(
     JWT_SECRET_KEY = "1234"
     )
 jwt = JWTManager(app)
+
+@app.after_request
+def set_response_headers(r):
+    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    r.headers['Pragma'] = 'no-cache'
+    r.headers['Expires'] = '0'
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
 '''
 @app.before_request
 def basic_authentication():
@@ -469,7 +477,7 @@ def singleSource():
                 Abf[i][j] = 150
                 Hb[i][j] = 1.3
                 ach[i][j] = 0.45
-                Qsoil_Qb[i][j] =0.003 
+                Qsoil_Qb[i][j] =0.003
             elif buildingType[i][j] == 2:
                 Lb[i][j] = 1
                 Lf[i][j] = 0
@@ -1204,7 +1212,13 @@ def multipleSource():
     data = {
     "Risk": Risk,
     "HQ": HQ,
-    "Cia": Cia
+    "Cia": Cia,
+    "Cs": Cs,
+    "VFwesp": VFwesp_6a,
+    "DeffT": DeffT,
+    "Hs": Hs,
+    "n": n,
+    "DHvs": DHvs
     }
     return jsonify(data)
 
