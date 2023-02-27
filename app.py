@@ -25,6 +25,19 @@ def basic_authentication():
     if request.method.lower() == 'options':
         return Response()
 
+@app.after_request
+def set_response_headers(r):
+    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    r.headers['Pragma'] = 'no-cache'
+    r.headers['Expires'] = '0'
+    r.headers["Access-Control-Allow-Origin"] = "*"
+    return r
+'''
+@app.before_request
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
+
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 
 @app.route('/singleSource', methods=HTTP_METHODS)
