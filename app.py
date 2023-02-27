@@ -11,19 +11,6 @@ app.config.update(
     JWT_SECRET_KEY = "1234"
     )
 jwt = JWTManager(app)
-#not use
-@app.after_request
-def set_response_headers(r):
-    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    r.headers['Pragma'] = 'no-cache'
-    r.headers['Expires'] = '0'
-    r.headers["Access-Control-Allow-Origin"] = "*"
-    return r
-'''
-@app.before_request
-def basic_authentication():
-    if request.method.lower() == 'options':
-        return Response()
 
 @app.after_request
 def set_response_headers(r):
@@ -32,6 +19,7 @@ def set_response_headers(r):
     r.headers['Expires'] = '0'
     r.headers["Access-Control-Allow-Origin"] = "*"
     return r
+'''
 
 @app.before_request
 def basic_authentication():
@@ -1225,13 +1213,7 @@ def multipleSource():
     data = {
     "Risk": Risk,
     "HQ": HQ,
-    "Cia": Cia,
-    "Cs": Cs,
-    "VFwesp": VFwesp_6a,
-    "DeffT": DeffT,
-    "Hs": Hs,
-    "n": n,
-    "DHvs": DHvs
+    "Cia": Cia
     }
     return jsonify(data)
 
