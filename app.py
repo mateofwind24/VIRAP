@@ -11,21 +11,6 @@ app.config.update(
     JWT_SECRET_KEY = "1234"
     )
 jwt = JWTManager(app)
-'''
-@app.before_request
-def basic_authentication():
-    if request.method.lower() == 'options':
-        return Response()
-
-HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
-
-from flask import Flask, request, url_for, render_template, redirect, jsonify
-from flask_cors import CORS
-app = Flask(__name__)
-
-HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
-
-CORS(app)
 
 @app.after_request
 def set_response_headers(r):
@@ -34,6 +19,13 @@ def set_response_headers(r):
     r.headers['Expires'] = '0'
     r.headers["Access-Control-Allow-Origin"] = "*"
     return r
+'''
+@app.before_request
+def basic_authentication():
+    if request.method.lower() == 'options':
+        return Response()
+
+HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 
 @app.route('/singleSource', methods=HTTP_METHODS)
 def singleSource():
