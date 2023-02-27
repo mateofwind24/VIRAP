@@ -11,7 +11,7 @@ app.config.update(
     JWT_SECRET_KEY = "1234"
     )
 jwt = JWTManager(app)
-
+#not use
 @app.after_request
 def set_response_headers(r):
     r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
