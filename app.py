@@ -32,7 +32,7 @@ def set_response_headers(r):
     r.headers['Expires'] = '0'
     r.headers["Access-Control-Allow-Origin"] = "*"
     return r
-'''
+
 @app.before_request
 def basic_authentication():
     if request.method.lower() == 'options':
