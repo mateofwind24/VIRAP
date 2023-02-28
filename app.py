@@ -64,7 +64,6 @@ def singleSource():
     else:
         Koc = Koc_input
     foc = float(inputdata['value_foc'])
-    # grid input start
     if Type == "sat":
         Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
     elif Type == "unsat":
@@ -74,79 +73,10 @@ def singleSource():
         Cmedium2_input = Stringbreak(inputdata['unsat_soilconc'], column, row)
     WT_input = Stringbreak(inputdata['waterlevel'], column, row)
     LE_input = Stringbreak(inputdata['elevation'], column, row)
-    Geo_Type_input = Stringbreak(inputdata['Geo_Type'], column, row)
-    mult = False
-    if inputdata['DeffT']!=None:
+    Geo_Type = int(inputdata['Geo_Type'])
+    layerType = inputdata['layerType']
+    if layerType=="multiple":
         DeffTtmp = float(inputdata['DeffT'])
-        mult = True
-    # Geo Type start
-    try:
-        nSA13 = float(inputdata['nSA_13'])
-        nSA14 = float(inputdata['nSA_14'])
-        nSA15 = float(inputdata['nSA_15'])
-        nSA16 = float(inputdata['nSA_16'])
-        nSA17 = float(inputdata['nSA_17'])
-        nSA18 = float(inputdata['nSA_18'])
-        nSA19 = float(inputdata['nSA_19'])
-        nSA20 = float(inputdata['nSA_20'])
-    except:
-        pass
-    try:
-        nwSA13 = float(inputdata['nwSA_13'])
-        nwSA14 = float(inputdata['nwSA_14'])
-        nwSA15 = float(inputdata['nwSA_15'])
-        nwSA16 = float(inputdata['nwSA_16'])
-        nwSA17 = float(inputdata['nwSA_17'])
-        nwSA18 = float(inputdata['nwSA_18'])
-        nwSA19 = float(inputdata['nwSA_19'])
-        nwSA20 = float(inputdata['nwSA_20'])
-    except:
-        pass
-    try:
-        rhoSA13 = float(inputdata['rhoSA_13'])
-        rhoSA14 = float(inputdata['rhoSA_14'])
-        rhoSA15 = float(inputdata['rhoSA_15'])
-        rhoSA16 = float(inputdata['rhoSA_16'])
-        rhoSA17 = float(inputdata['rhoSA_17'])
-        rhoSA18 = float(inputdata['rhoSA_18'])
-        rhoSA19 = float(inputdata['rhoSA_19'])
-        rhoSA20 = float(inputdata['rhoSA_20'])
-    except:
-        pass
-    try:
-        hcz13 = float(inputdata['hcz_13'])
-        hcz14 = float(inputdata['hcz_14'])
-        hcz15 = float(inputdata['hcz_15'])
-        hcz16 = float(inputdata['hcz_16'])
-        hcz17 = float(inputdata['hcz_17'])
-        hcz18 = float(inputdata['hcz_18'])
-        hcz19 = float(inputdata['hcz_19'])
-        hcz20 = float(inputdata['hcz_20'])
-    except:
-        pass
-    try:
-        ncz13 = float(inputdata['ncz_13'])
-        ncz14 = float(inputdata['ncz_14'])
-        ncz15 = float(inputdata['ncz_15'])
-        ncz16 = float(inputdata['ncz_16'])
-        ncz17 = float(inputdata['ncz_17'])
-        ncz18 = float(inputdata['ncz_18'])
-        ncz19 = float(inputdata['ncz_19'])
-        ncz20 = float(inputdata['ncz_20'])
-    except:
-        pass
-    try:
-        nwcz13 = float(inputdata['nwcz_13'])
-        nwcz14 = float(inputdata['nwcz_14'])
-        nwcz15 = float(inputdata['nwcz_15'])
-        nwcz16 = float(inputdata['nwcz_16'])
-        nwcz17 = float(inputdata['nwcz_17'])
-        nwcz18 = float(inputdata['nwcz_18'])
-        nwcz19 = float(inputdata['nwcz_19'])
-        nwcz20 = float(inputdata['nwcz_20'])
-    except:
-        pass
-    # Geo Type end
     buildingType_input = Stringbreak(inputdata['Found_Type'], column, row)
     # Building Type start
     try:
@@ -155,11 +85,6 @@ def singleSource():
         Lb13 = float(inputdata['LB_13'])
         Lb14 = float(inputdata['LB_14'])
         Lb15 = float(inputdata['LB_15'])
-        Lb16 = float(inputdata['LB_16'])
-        Lb17 = float(inputdata['LB_17'])
-        Lb18 = float(inputdata['LB_18'])
-        Lb19 = float(inputdata['LB_19'])
-        Lb20 = float(inputdata['LB_20'])
     except:
         pass
     try:
@@ -168,11 +93,6 @@ def singleSource():
         Lf13 = float(inputdata['Lf_13'])
         Lf14 = float(inputdata['Lf_14'])
         Lf15 = float(inputdata['Lf_15'])
-        Lf16 = float(inputdata['Lf_16'])
-        Lf17 = float(inputdata['Lf_17'])
-        Lf18 = float(inputdata['Lf_18'])
-        Lf19 = float(inputdata['Lf_19'])
-        Lf20 = float(inputdata['Lf_20'])
     except:
         pass
     try:
@@ -181,11 +101,6 @@ def singleSource():
         eta13 = float(inputdata['eta_13'])
         eta14 = float(inputdata['eta_14'])
         eta15 = float(inputdata['eta_15'])
-        eta16 = float(inputdata['eta_16'])
-        eta17 = float(inputdata['eta_17'])
-        eta18 = float(inputdata['eta_18'])
-        eta19 = float(inputdata['eta_19'])
-        eta20 = float(inputdata['eta_20'])
     except:
         pass
     try:
@@ -194,11 +109,6 @@ def singleSource():
         Abf13 = float(inputdata['Abf_13'])
         Abf14 = float(inputdata['Abf_14'])
         Abf15 = float(inputdata['Abf_15'])
-        Abf16 = float(inputdata['Abf_16'])
-        Abf17 = float(inputdata['Abf_17'])
-        Abf18 = float(inputdata['Abf_18'])
-        Abf19 = float(inputdata['Abf_19'])
-        Abf20 = float(inputdata['Abf_20'])
     except:
         pass
     try:
@@ -207,11 +117,6 @@ def singleSource():
         Hb13 = float(inputdata['Hb_13'])
         Hb14 = float(inputdata['Hb_14'])
         Hb15 = float(inputdata['Hb_15'])
-        Hb16 = float(inputdata['Hb_16'])
-        Hb17 = float(inputdata['Hb_17'])
-        Hb18 = float(inputdata['Hb_18'])
-        Hb19 = float(inputdata['Hb_19'])
-        Hb20 = float(inputdata['Hb_20'])
     except:
         pass
     try:
@@ -220,11 +125,6 @@ def singleSource():
         ach13 = float(inputdata['ach_13'])
         ach14 = float(inputdata['ach_14'])
         ach15 = float(inputdata['ach_15'])
-        ach16 = float(inputdata['ach_16'])
-        ach17 = float(inputdata['ach_17'])
-        ach18 = float(inputdata['ach_18'])
-        ach19 = float(inputdata['ach_19'])
-        ach20 = float(inputdata['ach_20'])
     except:
         pass
     try:
@@ -233,11 +133,6 @@ def singleSource():
         Qsoil_Qb13 = float(inputdata['Qsoil_Qb_13'])
         Qsoil_Qb14 = float(inputdata['Qsoil_Qb_14'])
         Qsoil_Qb15 = float(inputdata['Qsoil_Qb_15'])
-        Qsoil_Qb16 = float(inputdata['Qsoil_Qb_16'])
-        Qsoil_Qb17 = float(inputdata['Qsoil_Qb_17'])
-        Qsoil_Qb18 = float(inputdata['Qsoil_Qb_18'])
-        Qsoil_Qb19 = float(inputdata['Qsoil_Qb_19'])
-        Qsoil_Qb20 = float(inputdata['Qsoil_Qb_20'])
     except:
         pass
     # Building Type end
@@ -274,18 +169,114 @@ def singleSource():
     except:
         pass
     # Ex end
+    if Geo_Type == 1:
+        nSA = 0.459
+        nwSA = 0.215
+        nairSA = nSA - nwSA
+        rhoSA = 1.43
+        hcz = 0.815217391
+        ncz = 0.459
+        nwcz = 0.41185514
+    elif Geo_Type == 2:
+        nSA = 0.442
+        nwSA = 0.168
+        nairSA = nSA - nwSA
+        rhoSA = 1.48
+        hcz = 0.46875
+        ncz = 0.442
+        nwcz = 0.375117458
+    elif Geo_Type == 3:
+        nSA = 0.399
+        nwSA = 0.148
+        nairSA = nSA - nwSA
+        rhoSA = 1.59
+        hcz = 0.375
+        ncz = 0.399
+        nwcz = 0.331630276
+    elif Geo_Type == 4:
+        nSA = 0.39
+        nwSA = 0.076
+        nairSA = nSA - nwSA
+        rhoSA = 1.62
+        hcz = 0.1875
+        ncz = 0.39
+        nwcz = 0.302585409
+    elif Geo_Type == 5:
+        nSA = 0.375
+        nwSA = 0.054
+        nairSA = nSA - nwSA
+        rhoSA = 1.66
+        hcz = 0.170454545
+        ncz = 0.375
+        nwcz = 0.253258113
+    elif Geo_Type == 6:
+        nSA = 0.385
+        nwSA = 0.197
+        nairSA = nSA - nwSA
+        rhoSA = 1.63
+        hcz = 0.3
+        ncz = 0.385
+        nwcz = 0.354846864
+    elif Geo_Type == 7:
+        nSA = 0.384
+        nwSA = 0.146
+        nairSA = nSA - nwSA
+        rhoSA = 1.63
+        hcz = 0.25862069
+        ncz = 0.384
+        nwcz = 0.333283473
+    elif Geo_Type == 8:
+        nSA = 0.387
+        nwSA = 0.103
+        nairSA = nSA - nwSA
+        rhoSA = 1.62
+        hcz = 0.25
+        ncz = 0.387
+        nwcz = 0.31973079
+    elif Geo_Type == 9:
+        nSA = 0.489
+        nwSA = 0.167
+        nairSA = nSA - nwSA
+        rhoSA = 1.35
+        hcz = 1.630434783
+        ncz = 0.489
+        nwcz = 0.381686648
+    elif Geo_Type == 10:
+        nSA = 0.439
+        nwSA = 0.18
+        nairSA = nSA - nwSA
+        rhoSA = 1.49
+        hcz = 0.681818182
+        ncz = 0.439
+        nwcz = 0.348694517
+    elif Geo_Type == 11:
+        nSA = 0.481
+        nwSA = 0.216
+        nairSA = nSA - nwSA
+        rhoSA = 1.38
+        hcz = 1.923076923
+        ncz = 0.481
+        nwcz = 0.423644962
+    elif Geo_Type == 12:
+        nSA = 0.482
+        nwSA = 0.198
+        nairSA = nSA - nwSA
+        rhoSA = 1.37
+        hcz = 1.339285714
+        ncz = 0.482
+        nwcz = 0.399159996
+    elif Geo_Type == 13:
+        nSA = float(inputdata['nSA_13'])
+        nwSA = float(inputdata['nwSA_13'])
+        nairSA = nSA - nwSA
+        rhoSA = float(inputdata['rhoSA_13'])
+        hcz = float(inputdata['hcz_13'])
+        ncz = float(inputdata['ncz_13'])
+        nwcz = float(inputdata['nwcz_13'])
     Cmedium = [[0 for j in range(row)] for i in range(column)]
     Cmedium2 = [[0 for j in range(row)] for i in range(column)]
     WT = [[0 for j in range(row)] for i in range(column)]
     LE = [[0 for j in range(row)] for i in range(column)]
-    Geo_Type = [[0 for j in range(row)] for i in range(column)]
-    nSA = [[0 for j in range(row)] for i in range(column)]
-    nwSA = [[0 for j in range(row)] for i in range(column)]
-    nairSA = [[0 for j in range(row)] for i in range(column)]
-    rhoSA = [[0 for j in range(row)] for i in range(column)]
-    hcz = [[0 for j in range(row)] for i in range(column)]
-    ncz = [[0 for j in range(row)] for i in range(column)]
-    nwcz = [[0 for j in range(row)] for i in range(column)]
     buildingType = [[0 for j in range(row)] for i in range(column)]
     Lb = [[0 for j in range(row)] for i in range(column)]
     Lf = [[0 for j in range(row)] for i in range(column)]
@@ -309,167 +300,6 @@ def singleSource():
                 Cmedium2[i][j] = float(Cmedium2_input[i][j])
             LE[i][j] = float(LE_input[i][j])
             WT[i][j] = float(WT_input[i][j])
-            Geo_Type[i][j] = int(Geo_Type_input[i][j])
-            if Geo_Type[i][j] == 1:
-                nSA[i][j] = 0.459
-                nwSA[i][j] = 0.215
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.43
-                hcz[i][j] = 0.815217391
-                ncz[i][j] = 0.459
-                nwcz[i][j] = 0.41185514
-            elif Geo_Type[i][j] == 2:
-                nSA[i][j] = 0.442
-                nwSA[i][j] = 0.168
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.48
-                hcz[i][j] = 0.46875
-                ncz[i][j] = 0.442
-                nwcz[i][j] = 0.375117458
-            elif Geo_Type[i][j] == 3:
-                nSA[i][j] = 0.399
-                nwSA[i][j] = 0.148
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.59
-                hcz[i][j] = 0.375
-                ncz[i][j] = 0.399
-                nwcz[i][j] = 0.331630276
-            elif Geo_Type[i][j] == 4:
-                nSA[i][j] = 0.39
-                nwSA[i][j] = 0.076
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.62
-                hcz[i][j] = 0.1875
-                ncz[i][j] = 0.39
-                nwcz[i][j] = 0.302585409
-            elif Geo_Type[i][j] == 5:
-                nSA[i][j] = 0.375
-                nwSA[i][j] = 0.054
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.66
-                hcz[i][j] = 0.170454545
-                ncz[i][j] = 0.375
-                nwcz[i][j] = 0.253258113
-            elif Geo_Type[i][j] == 6:
-                nSA[i][j] = 0.385
-                nwSA[i][j] = 0.197
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.63
-                hcz[i][j] = 0.3
-                ncz[i][j] = 0.385
-                nwcz[i][j] = 0.354846864
-            elif Geo_Type[i][j] == 7:
-                nSA[i][j] = 0.384
-                nwSA[i][j] = 0.146
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.63
-                hcz[i][j] = 0.25862069
-                ncz[i][j] = 0.384
-                nwcz[i][j] = 0.333283473
-            elif Geo_Type[i][j] == 8:
-                nSA[i][j] = 0.387
-                nwSA[i][j] = 0.103
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.62
-                hcz[i][j] = 0.25
-                ncz[i][j] = 0.387
-                nwcz[i][j] = 0.31973079
-            elif Geo_Type[i][j] == 9:
-                nSA[i][j] = 0.489
-                nwSA[i][j] = 0.167
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.35
-                hcz[i][j] = 1.630434783
-                ncz[i][j] = 0.489
-                nwcz[i][j] = 0.381686648
-            elif Geo_Type[i][j] == 10:
-                nSA[i][j] = 0.439
-                nwSA[i][j] = 0.18
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.49
-                hcz[i][j] = 0.681818182
-                ncz[i][j] = 0.439
-                nwcz[i][j] = 0.348694517
-            elif Geo_Type[i][j] == 11:
-                nSA[i][j] = 0.481
-                nwSA[i][j] = 0.216
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.38
-                hcz[i][j] = 1.923076923
-                ncz[i][j] = 0.481
-                nwcz[i][j] = 0.423644962
-            elif Geo_Type[i][j] == 12:
-                nSA[i][j] = 0.482
-                nwSA[i][j] = 0.198
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = 1.37
-                hcz[i][j] = 1.339285714
-                ncz[i][j] = 0.482
-                nwcz[i][j] = 0.399159996
-            elif Geo_Type[i][j] == 13:
-                nSA[i][j] = nSA13
-                nwSA[i][j] = nwSA13
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA13
-                hcz[i][j] = hcz13
-                ncz[i][j] = ncz13
-                nwcz[i][j] = nwcz13
-            elif Geo_Type[i][j] == 14:
-                nSA[i][j] = nSA14
-                nwSA[i][j] = nwSA14
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA14
-                hcz[i][j] = hcz14
-                ncz[i][j] = ncz14
-                nwcz[i][j] = nwcz14
-            elif Geo_Type[i][j] == 15:
-                nSA[i][j] = nSA15
-                nwSA[i][j] = nwSA15
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA15
-                hcz[i][j] = hcz15
-                ncz[i][j] = ncz15
-                nwcz[i][j] = nwcz15
-            elif Geo_Type[i][j] == 16:
-                nSA[i][j] = nSA16
-                nwSA[i][j] = nwSA16
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA16
-                hcz[i][j] = hcz16
-                ncz[i][j] = ncz16
-                nwcz[i][j] = nwcz16
-            elif Geo_Type[i][j] == 17:
-                nSA[i][j] = nSA17
-                nwSA[i][j] = nwSA17
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA17
-                hcz[i][j] = hcz17
-                ncz[i][j] = ncz17
-                nwcz[i][j] = nwcz17
-            elif Geo_Type[i][j] == 18:
-                nSA[i][j] = nSA18
-                nwSA[i][j] = nwSA18
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA18
-                hcz[i][j] = hcz18
-                ncz[i][j] = ncz18
-                nwcz[i][j] = nwcz18
-            elif Geo_Type[i][j] == 19:
-                nSA[i][j] = nSA19
-                nwSA[i][j] = nwSA19
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA19
-                hcz[i][j] = hcz19
-                ncz[i][j] = ncz19
-                nwcz[i][j] = nwcz19
-            elif Geo_Type[i][j] == 20:
-                nSA[i][j] = nSA20
-                nwSA[i][j] = nwSA20
-                nairSA[i][j] = nSA[i][j] - nwSA[i][j]
-                rhoSA[i][j] = rhoSA20
-                hcz[i][j] = hcz20
-                ncz[i][j] = ncz20
-                nwcz[i][j] = nwcz20
             buildingType[i][j] = int(buildingType_input[i][j])
             if buildingType[i][j] == 1:
                 Lb[i][j] = 1
@@ -591,46 +421,6 @@ def singleSource():
                 Hb[i][j] = Hb15
                 ach[i][j] = ach15
                 Qsoil_Qb[i][j] = Qsoil_Qb15
-            elif buildingType[i][j] == 16:
-                Lb[i][j] = Lb16
-                Lf[i][j] = Lf16
-                eta[i][j] = eta16
-                Abf[i][j] = Abf16
-                Hb[i][j] = Hb16
-                ach[i][j] = ach16
-                Qsoil_Qb[i][j] = Qsoil_Qb16
-            elif buildingType[i][j] == 17:
-                Lb[i][j] = Lb17
-                Lf[i][j] = Lf17
-                eta[i][j] = eta17
-                Abf[i][j] = Abf17
-                Hb[i][j] = Hb17
-                ach[i][j] = ach17
-                Qsoil_Qb[i][j] = Qsoil_Qb17
-            elif buildingType[i][j] == 18:
-                Lb[i][j] = Lb18
-                Lf[i][j] = Lf18
-                eta[i][j] = eta18
-                Abf[i][j] = Abf18
-                Hb[i][j] = Hb18
-                ach[i][j] = ach18
-                Qsoil_Qb[i][j] = Qsoil_Qb18
-            elif buildingType[i][j] == 19:
-                Lb[i][j] = Lb19
-                Lf[i][j] = Lf19
-                eta[i][j] = eta19
-                Abf[i][j] = Abf19
-                Hb[i][j] = Hb19
-                ach[i][j] = ach19
-                Qsoil_Qb[i][j] = Qsoil_Qb19
-            elif buildingType[i][j] == 20:
-                Lb[i][j] = Lb20
-                Lf[i][j] = Lf20
-                eta[i][j] = eta20
-                Abf[i][j] = Abf20
-                Hb[i][j] = Hb20
-                ach[i][j] = ach20
-                Qsoil_Qb[i][j] = Qsoil_Qb20
             Ex[i][j] = int(Ex_input[i][j])
             if Ex[i][j] == 1:
                 ATc[i][j] = 70
@@ -696,81 +486,77 @@ def singleSource():
             hSA[i][j] = Ls[i][j]
     # VFwesp calculate CM6a
     if Type == "sat":
-        DeffA = [[0 for j in range(row)] for i in range(column)]
-        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
         A_param_6a = [[0 for j in range(row)] for i in range(column)]
         B_param = [[0 for j in range(row)] for i in range(column)]
         C_param_6a = [[0 for j in range(row)] for i in range(column)]
         VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
+        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
+        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
         for i in range(column):
             for j in range(row):
-                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
-                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
-                if mult:
+                if layerType=="multiple":
                     DeffT[i][j] = DeffTtmp
                 else:
-                    DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
+                    DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
-                    VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA[i][j],eta[i][j])
+                    VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA,eta[i][j])
                 elif Qsoil[i][j] > 0:
-                    B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
+                    B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
                     C_param_6a[i][j] = C_param_6a_cal(Qsoil_Qb[i][j])
                     VFwesp_6a[i][j] = VFwesp_6a_Qsnozero_cal(A_param_6a[i][j],B_param[i][j],C_param_6a[i][j])
     # VFsesp calculate CM4
     elif Type == "unsat":
-        ks = [[0 for j in range(row)] for i in range(column)]
-        DeffA = [[0 for j in range(row)] for i in range(column)]
-        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
-        A_param_4a = [[0 for j in range(row)] for i in range(column)]
         B_param = [[0 for j in range(row)] for i in range(column)]
         C_param_4a = [[0 for j in range(row)] for i in range(column)]
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
+        ks = Koc*foc
+        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
+        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
+        A_param_4a = A_param_4a_cal(Hs,rhoSA,nwSA,ks,nairSA)
         for i in range(column):
             for j in range(row):
-                ks[i][j] = Koc*foc
-                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
-                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
-                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA[i][j],nwSA[i][j],ks[i][j],nairSA[i][j])
-                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
-                C_param_4a[i][j] = C_param_4a_cal(DeffA[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                if layerType=="multiple":
+                    DeffT[i][j] = DeffTtmp
+                else:
+                    DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
+                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
+                C_param_4a[i][j] = C_param_4a_cal(DeffA,Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
-                    VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a,C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA,eta[i][j])
                 elif Qsoil[i][j] > 0:
-                    VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a,C_param_4a[i][j],B_param[i][j])
     # CM4 and CM6 both
     else:
-        ks = [[0 for j in range(row)] for i in range(column)]
-        DeffA = [[0 for j in range(row)] for i in range(column)]
-        DeffCZ = [[0 for j in range(row)] for i in range(column)]
         DeffT = [[0 for j in range(row)] for i in range(column)]
         A_param_6a = [[0 for j in range(row)] for i in range(column)]
-        A_param_4a = [[0 for j in range(row)] for i in range(column)]
         B_param = [[0 for j in range(row)] for i in range(column)]
         C_param_6a = [[0 for j in range(row)] for i in range(column)]
         C_param_4a = [[0 for j in range(row)] for i in range(column)]
         VFwesp_6a = [[0 for j in range(row)] for i in range(column)]
         VFsesp_4a = [[0 for j in range(row)] for i in range(column)]
+        ks = Koc*foc
+        DeffA = DeffA_cal(Dair,nSA,nwSA,Dwater,Hs)
+        DeffCZ = DeffCZ_cal(Dair,ncz,nwcz,Dwater,Hs)
+        A_param_4a = A_param_4a_cal(Hs,rhoSA,nwSA,ks,nairSA)
         for i in range(column):
             for j in range(row):
-                ks[i][j] = Koc*foc
-                DeffA[i][j] = DeffA_cal(Dair,nSA[i][j],nwSA[i][j],Dwater,Hs)
-                DeffCZ[i][j] = DeffCZ_cal(Dair,ncz[i][j],nwcz[i][j],Dwater,Hs)
-                DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz[i][j],DeffA[i][j],DeffCZ[i][j])
+                if layerType=="multiple":
+                    DeffT[i][j] = DeffTtmp
+                else:
+                    DeffT[i][j] = DeffT_cal(hSA[i][j],Lb[i][j],hcz,DeffA,DeffCZ)
                 A_param_6a[i][j] = A_param_6a_cal(DeffT[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
-                A_param_4a[i][j] = A_param_4a_cal(Hs,rhoSA[i][j],nwSA[i][j],ks[i][j],nairSA[i][j])
-                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA[i][j],eta[i][j],Abf[i][j],Lb[i][j])
-                C_param_4a[i][j] = C_param_4a_cal(DeffA[i][j],Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
+                B_param[i][j] = B_param_cal(Qsoil_Qb[i][j],Qb[i][j],Lf[i][j],DeffA,eta[i][j],Abf[i][j],Lb[i][j])
+                C_param_4a[i][j] = C_param_4a_cal(DeffA,Abf[i][j],Lb[i][j],Qb[i][j],Ls[i][j])
                 if Qsoil[i][j] == 0:
                     VFwesp_6a[i][j] = VFwesp_6a_Qszero_cal(A_param_6a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],Lb[i][j],DeffA,eta[i][j])
-                    VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a[i][j],C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA[i][j],eta[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qszero_cal(A_param_4a,C_param_4a[i][j],DeffT[i][j],Lf[i][j],Ls[i][j],DeffA,eta[i][j])
                 elif Qsoil[i][j] > 0:
                     C_param_6a[i][j] = C_param_6a_cal(Qsoil_Qb[i][j])
                     VFwesp_6a[i][j] = VFwesp_6a_Qsnozero_cal(A_param_6a[i][j],B_param[i][j],C_param_6a[i][j])
-                    VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a[i][j],C_param_4a[i][j],B_param[i][j])
+                    VFsesp_4a[i][j] = VFsesp_4a_Qsnozero_cal(A_param_4a,C_param_4a[i][j],B_param[i][j])
     # Risk calculate loop
     mIURTCE_R_GW = 1.0e-6;
     IURTCE_R_GW = 3.1e-6;
@@ -827,24 +613,11 @@ def singleSource():
                     HQ[i][j] = HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia[i][j],Rfc,ATnc[i][j]) + HQ_cal(EF[i][j],ED[i][j],ET[i][j],Cia2[i][j],Rfc,ATnc[i][j])
                 else:
                     HQ[i][j] = "NULL"
-    if Type == "sat":
-        data = {
-        "Risk": Risk,
-        "HQ": HQ,
-        "Cia":Cia
-        }
-    elif Type == "unsat":
-        data = {
-        "Risk": Risk,
-        "HQ": HQ,
-        "Cia":Cia
-        }
-    elif Type == "both":
-        data = {
-        "Risk": Risk,
-        "HQ": HQ,
-        "Cia":Cia
-        }
+    data = {
+    "Risk": Risk,
+    "HQ": HQ,
+    "Cia":Cia
+    }
     return jsonify(data)
 
 @app.route('/multipleSource', methods=HTTP_METHODS)
