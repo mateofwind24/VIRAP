@@ -1,32 +1,24 @@
 import math
-from flask import Flask, request, url_for, render_template, redirect, jsonify, Response
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
-#from flask_jwt_extended import JWTManager, create_access_token
 
 app = Flask(__name__)
 CORS(app)
-'''
-app.config.update(
-    DEBUG = True,
-    JWT_SECRET_KEY = "1234"
-    )
-jwt = JWTManager(app)
-
-@app.after_request
-def set_response_headers(r):
-    r.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    r.headers['Pragma'] = 'no-cache'
-    r.headers['Expires'] = '0'
-    r.headers["Access-Control-Allow-Origin"] = "*"
-    return r
-'''
 
 @app.before_request
 def basic_authentication():
     if request.method.lower() == 'options':
         return Response()
 
-HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
+@app.errorhandler(ZeroDivisionError)
+def handler_ZeroDivisionError(error):
+    return jsonify({'message': 'ZeroDivisionError'})
+
+@app.errorhandler(OverflowError)
+def handler_OverflowError(error):
+    return jsonify({'message': 'OverflowError'})
+
+HTTP_METHODS = ['GET', 'POST', 'OPTIONS']
 
 @app.route('/singleSource', methods=HTTP_METHODS)
 def singleSource():
@@ -62,7 +54,7 @@ def singleSource():
     if Koc_input=="NULL":
         Koc = 0
     else:
-        Koc = Koc_input
+        Koc = float(Koc_input)
     foc = float(inputdata['value_foc'])
     if Type == "sat":
         Cmedium_input = Stringbreak(inputdata['sat_soilconc'], column, row)
@@ -154,18 +146,6 @@ def singleSource():
         ET3 = float(inputdata['ET_3'])
         ET4 = float(inputdata['ET_4'])
         ET5 = float(inputdata['ET_5'])
-    except:
-        pass
-    try:
-        ATc3 = float(inputdata['ATC_3'])
-        ATc4 = float(inputdata['ATc_4'])
-        ATc5 = float(inputdata['ATc_5'])
-    except:
-        pass
-    try:
-        ATnc3 = float(inputdata['ATnc_3'])
-        ATnc4 = float(inputdata['ATnc_4'])
-        ATnc5 = float(inputdata['ATnc_5'])
     except:
         pass
     # Ex end
@@ -435,20 +415,20 @@ def singleSource():
                 ED[i][j] = 25
                 ET[i][j] = 8
             elif Ex[i][j] == 3:
-                ATc[i][j] = ATc3
-                ATnc[i][j] = ATnc3
+                ATc[i][j] = 70
+                ATnc[i][j] = 26
                 EF[i][j] = EF3
                 ED[i][j] = ED3
                 ET[i][j] = ET3
             elif Ex[i][j] == 4:
-                ATc[i][j] = ATc4
-                ATnc[i][j] = ATnc4
+                ATc[i][j] = 70
+                ATnc[i][j] = 26
                 EF[i][j] = EF4
                 ED[i][j] = ED4
                 ET[i][j] = ET4
             elif Ex[i][j] == 5:
-                ATc[i][j] = ATc5
-                ATnc[i][j] = ATnc5
+                ATc[i][j] = 70
+                ATnc[i][j] = 26
                 EF[i][j] = EF5
                 ED[i][j] = ED5
                 ET[i][j] = ET5
@@ -622,7 +602,7 @@ def singleSource():
 
 @app.route('/multipleSource', methods=HTTP_METHODS)
 def multipleSource():
-    inputdata = request.get_json(silent=True)
+    inputdata = request.get_json()
     chem = [0 for i in range(5)]
     S = [0 for i in range(5)]
     Hc = [0 for i in range(5)]
@@ -818,14 +798,11 @@ def multipleSource():
         foc[4] = float(inputdata['value_foc_5'])
     except:
         pass
-    try:
-        Kow[0] = float(inputdata['value_Kow_1'])
-        Kow[1] = float(inputdata['value_Kow_2'])
-        Kow[2] = float(inputdata['value_Kow_3'])
-        Kow[3] = float(inputdata['value_Kow_4'])
-        Kow[4] = float(inputdata['value_Kow_5'])
-    except:
-        pass
+    Ts[0] = 288.15
+    Ts[1] = 288.15
+    Ts[2] = 288.15
+    Ts[3] = 288.15
+    Ts[4] = 288.15
     try:
         Ts[0] = float(inputdata['Ts_1']) + 273.15
         Ts[1] = float(inputdata['Ts_2']) + 273.15
